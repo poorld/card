@@ -1,0 +1,67 @@
+package ooo.poorld.mycard.utils;
+
+public class Constans {
+
+    public static final String TAG = "TEENYDA";
+
+    //设置默认超时时间
+    public static final int DEFAULT_TIME=10;
+
+
+//    public final static  String BaseUrl = "http://120.78.186.81/api/";
+//    public final static  String BaseUrl = "http://192.168.43.93:9000/api/app/";
+    public final static  String BaseUrl = "http://192.168.1.66:9000/api/app/";
+
+    public final static  String retrofit = "values/5";
+    public final static  String retrofitList = "values";
+
+    public final static String book = "book/book";
+
+    /**
+     * 拍照 相片名称
+     */
+    public static final String TAKE_PICTURE_PHOTO_NAME = "take_photo.jpg";
+
+    /**
+     * 相片存储路径:/storage/emulated/0/Pictures
+     */
+    public static final String PHOTO_STORAGE_PATH = "Pictures";
+
+    /**
+     * 从相册获取 相片名称photo album
+     */
+    public static final String PHOTO_ALBUM = "photo_album.jpg";
+
+    /**
+     * /storage/emulated/0/mycard/
+     */
+    public static final String BASE_PATH = "mycard";
+
+    /**
+     * 证件资源路径/data/data/appname/files/
+     */
+    public static final String PATH_FILES = "files";
+
+    /**
+     * 证件资源路径/storage/emulated/0/mycard/cert/
+     */
+    public static final String DATA_PATH_CERT = "cert";
+
+
+    /**
+     * 卡片资源路径/data/data/appname/file/card/
+     */
+    public static final String DATA_PATH_CARD = "card";
+
+    /**
+     * 资料资源路径/data/data/appname/file/data/
+     */
+    public static final String DATA_PATH_DATA = "data";
+
+    /**
+     * 备份资源路径/data/data/appname/file/backup/
+     */
+    public static final String DATA_PATH_BACKUP = "backup";
+
+
+}

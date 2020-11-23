@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_bottom_radius1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#fff"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="25dp"
+                android:textSize="14sp"
+                android:text="何以为家"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:background="@drawable/shape_bottom_radius">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                app:civ_border_width="3dp"
+                app:civ_border_color="#7182ff"
+                android:src="@drawable/myself"
+                android:layout_centerInParent="true"/>
+            
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="15dp"
+        android:background="@drawable/shape_radius_7182ff">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:padding="15dp"
+            android:text="归根结底，当我们谈论家的时候，到底在谈论什么？家不是一栋建筑，也和家长的性别、人数无关，更非只有富人才有家。
+            应该有人提供庇佑，有人受到保护；有人承担责任，使孩童免于流浪、迷茫和惶惑。
+            免于错位、伤害和憎恨——
+            不要让孩子憎恨生育和生命，让他们明白这是伟大的创造。
+更重要的是，在家庭中搭建自己的灵魂框架，学会平静客观地自视和自赏，承认自己的存在——从身体到灵魂，并爱自己。
+就像我们也是小孩子的时候，第一天上学的时候，认识新的小朋友的时候，大声地说出，我叫什么，我的父母是谁，我有多么爱他们。
+不要家外之家，也不要补充的爱，不用上穷碧落下黄泉，也不要被失望冻住的心。
+挺胸抬头，骄傲得宛如追逐太阳的向日葵，宛如展示绚丽尾羽的孔雀。
+宛如天生。
+“以免当我生命终结，发现自己从没有活过。”"/>
+    </RelativeLayout>
+
+</LinearLayout>

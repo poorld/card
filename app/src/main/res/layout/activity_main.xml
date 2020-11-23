@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/shape_border_radius">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:layout_centerInParent="true"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/home_more"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="个人资料管理"
+                android:layout_centerHorizontal="true"
+                android:textColor="#fff"
+                android:textSize="15sp"/>
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/more"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="-25dp"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_cert"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:background="@drawable/shape_fff_radius">
+
+            <ImageView
+                android:id="@+id/iv1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/certificate"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="证件管理"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_card"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/shape_fff_radius">
+
+            <ImageView
+                android:id="@+id/iv2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/card"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="卡片管理"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:paddingStart="25dp"
+        android:paddingEnd="25dp">
+
+        <RelativeLayout
+            android:id="@+id/rl_data"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:background="@drawable/shape_fff_radius">
+
+            <ImageView
+                android:id="@+id/iv3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/data"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="资料管理"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_myself"
+            android:layout_width="150dp"
+            android:layout_height="200dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/shape_fff_radius">
+
+            <ImageView
+                android:id="@+id/iv4"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/user"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/iv4"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:text="用户中心"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>
