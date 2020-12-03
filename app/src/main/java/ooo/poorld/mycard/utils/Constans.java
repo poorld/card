@@ -57,6 +57,10 @@ public class Constans {
      * 资料资源路径/data/data/appname/file/data/
      */
     public static final String DATA_PATH_DATA = "data";
+    public static final String DATA_PATH_DATA_DOCUMENT = "我的文档";
+    public static final String DATA_PATH_DATA_IMAGE = "我的图片";
+    public static final String DATA_PATH_DATA_MUSIC = "我的音乐";
+    public static final String DATA_PATH_DATA_VIDEO = "我的视频";
 
     /**
      * 备份资源路径/data/data/appname/file/backup/

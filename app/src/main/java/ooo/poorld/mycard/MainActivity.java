@@ -94,10 +94,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<File> files = new ArrayList<>();
-        files.add(new File(root, Constans.DATA_PATH_CERT));
-        files.add(new File(root, Constans.DATA_PATH_CARD));
-        files.add(new File(root, Constans.DATA_PATH_DATA));
-        files.add(new File(root, Constans.DATA_PATH_BACKUP));
+        File cert = new File(root, Constans.DATA_PATH_CERT);
+        File card = new File(root, Constans.DATA_PATH_CARD);
+        File data = new File(root, Constans.DATA_PATH_DATA);
+        File backup = new File(root, Constans.DATA_PATH_BACKUP);
+        String dataAbsolutePath = data.getAbsolutePath();
+        File data_document = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_DOCUMENT);
+        File data_image = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_IMAGE);
+        File data_music = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_MUSIC);
+        File data_video = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_VIDEO);
+        files.add(cert);
+        files.add(card);
+        files.add(data);
+        files.add(backup);
+        files.add(data_document);
+        files.add(data_image);
+        files.add(data_music);
+        files.add(data_video);
 
         for (File file : files) {
             if (!file.exists()) {

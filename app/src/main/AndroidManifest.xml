@@ -30,6 +30,7 @@
         <activity android:name=".model.card.CardActivity" />
         <activity android:name=".model.card.AddCardActivity" />
         <activity android:name=".model.card.CardInfoAct" />
+        <activity android:name=".model.data.DataMain" />
     </application>
 
 </manifest>

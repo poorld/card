@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.List;
 
+import ooo.poorld.mycard.DataActivity;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.entity.FileData;
 
@@ -68,6 +69,12 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
         if (fileData.isDirectory()) {
             setDrawable(viewHolder.file_image, R.drawable.directory);
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DataActivity.startActivity(mContext, fileData.getFilePath());
+                }
+            });
         }
     }
 
