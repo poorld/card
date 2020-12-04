@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".model.cert.CertificateActivity" />
-        <activity android:name=".DataActivity" />
+        <activity android:name=".model.data.DataManageActivity" />
         <activity android:name=".MyselfActivity" />
         <activity android:name=".model.cert.AddCertActivity" />
         <activity android:name=".model.cert.CertInfoAct" />

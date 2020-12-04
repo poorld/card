@@ -1,23 +1,16 @@
 package ooo.poorld.mycard.model.data;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import ooo.poorld.mycard.R;
-import ooo.poorld.mycard.adapter.DataAdapter;
-import ooo.poorld.mycard.entity.FileData;
 import ooo.poorld.mycard.utils.Constans;
 
 /**
@@ -25,70 +18,72 @@ import ooo.poorld.mycard.utils.Constans;
  * date: 2020/11/27
  * description:
  */
-public class DataMain extends AppCompatActivity {
-    private RecyclerView rv;
+public class DataMain extends AppCompatActivity implements View.OnClickListener {
+
+    private LinearLayout ll_document;
+    private LinearLayout ll_image;
+    private LinearLayout ll_music;
+    private LinearLayout ll_video;
 
     private static final String dataPath = Constans.BASE_PATH + File.separator + Constans.DATA_PATH_DATA;
+
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, DataMain.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_certificate);
-        rv = findViewById(R.id.rv);
+        setContentView(R.layout.activity_data);
 
+        ll_document = findViewById(R.id.ll_document);
+        ll_image = findViewById(R.id.ll_image);
+        ll_music = findViewById(R.id.ll_music);
+        ll_video = findViewById(R.id.ll_video);
 
-        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            if (ContextCompat.checkSelfPermission(DataMain.this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
-                //没有权限则申请权限
-                ActivityCompat.requestPermissions(DataMain.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
-            }else {
-                //有权限直接执行,docode()不用做处理
-                initFile();
-
-            }
-        }else {
-            //小于6.0，不用申请权限，直接执行
-            initFile();
-        }
-
-
+        ll_document.setOnClickListener(this);
+        ll_image.setOnClickListener(this);
+        ll_music.setOnClickListener(this);
+        ll_video.setOnClickListener(this);
     }
 
-    private void initFile() {
-        File directory_data = null;
 
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState()) ) {//判断外部存储是否可用
-            directory_data = Environment.getExternalStoragePublicDirectory(dataPath);
+    private String getBaseDir() {
+        File directory;
+        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {//判断外部存储是否可用
+            directory = Environment.getExternalStoragePublicDirectory(dataPath);
 
-        }else{
+        } else {
             //没外部存储就使用内部存储
             ///data/data/app包名/files目录
-            directory_data= new File(getFilesDir() + File.separator + dataPath);
+            directory = new File(getFilesDir() + File.separator + dataPath);
         }
-        // if(!directory_data.exists()){//判断文件目录是否存在
-        //     directory_data.mkdirs();
-        // }
-
-        File[] files = directory_data.listFiles();
-        List<FileData> arrayList = new ArrayList<>();
-        for (File file: files) {
-            boolean directory = file.isDirectory();
-
-            FileData fileData = new FileData();
-            if (directory) {
-                fileData.setFilePath(file.getAbsolutePath());
-                fileData.setDirectory(true);
-            }
-
-            arrayList.add(fileData);
-        }
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rv.setLayoutManager(linearLayoutManager);
-        rv.setAdapter(new DataAdapter(this, arrayList));
+        return directory.getPath();
     }
 
-    private String getSuffix(String fileName) {
-        return fileName.substring(fileName.lastIndexOf(".") + 1);
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_document:
+                startAct(Constans.DATA_PATH_DATA_DOCUMENT);
+                break;
+             case R.id.ll_image:
+                 startAct(Constans.DATA_PATH_DATA_IMAGE);
+                break;
+             case R.id.ll_music:
+                 startAct(Constans.DATA_PATH_DATA_MUSIC);
+                break;
+             case R.id.ll_video:
+                 startAct(Constans.DATA_PATH_DATA_VIDEO);
+                break;
+        }
+
+    }
+
+    private void startAct(String type) {
+        String dir = getBaseDir() + File.separator + type;
+        DataManageActivity.startActivity(this, dir, type);
     }
 }

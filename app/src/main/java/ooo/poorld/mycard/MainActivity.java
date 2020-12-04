@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import ooo.poorld.mycard.model.card.CardActivity;
 import ooo.poorld.mycard.model.cert.CertificateActivity;
+import ooo.poorld.mycard.model.data.DataMain;
+import ooo.poorld.mycard.model.data.DataManageActivity;
 import ooo.poorld.mycard.utils.Constans;
 import ooo.poorld.mycard.utils.ConstansUtil;
 import ooo.poorld.mycard.utils.Permissions;
@@ -45,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(MainActivity.this, DataActivity.class));
+                        startActivity(new Intent(MainActivity.this, DataMain.class));
                     }
                 });
         findViewById(R.id.rl_myself)
