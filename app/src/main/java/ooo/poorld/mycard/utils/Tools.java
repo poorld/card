@@ -72,6 +72,7 @@ public class Tools {
             fileInputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
+            outputFile.deleteOnExit();
         }
     }
 
