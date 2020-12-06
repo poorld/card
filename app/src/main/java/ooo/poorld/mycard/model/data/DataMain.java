@@ -12,6 +12,7 @@ import java.io.File;
 import androidx.appcompat.app.AppCompatActivity;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.utils.Constans;
+import ooo.poorld.mycard.utils.Tools;
 
 /**
  * author: teenyda
@@ -83,7 +84,7 @@ public class DataMain extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void startAct(String type) {
-        String dir = getBaseDir() + File.separator + type;
+        String dir = Tools.getBaseDir(this, dataPath) + File.separator + type;
         DataManageActivity.startActivity(this, dir, type);
     }
 }

@@ -7,14 +7,19 @@ import org.greenrobot.greendao.converter.PropertyConverter;
  * date: 2020/11/21
  * description:
  */
-public class DateTypeConverter implements PropertyConverter<DataType, String> {
-    @Override
+public class DateTypeConverter implements PropertyConverter<DataType, Integer> {
+    /*@Override
     public DataType convertToEntityProperty(String databaseValue) {
         return DataType.valueOf(databaseValue);
+    }*/
+
+    @Override
+    public DataType convertToEntityProperty(Integer databaseValue) {
+        return DataType.values()[databaseValue];
     }
 
     @Override
-    public String convertToDatabaseValue(DataType entityProperty) {
+    public Integer convertToDatabaseValue(DataType entityProperty) {
         return entityProperty.getType();
     }
 }

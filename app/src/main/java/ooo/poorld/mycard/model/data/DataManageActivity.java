@@ -21,6 +21,10 @@ import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.greentoad.turtlebody.docpicker.DocPicker;
 import com.greentoad.turtlebody.docpicker.core.DocPickerConfig;
+import com.luck.picture.lib.PictureSelector;
+import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.entity.LocalMedia;
+import com.luck.picture.lib.listener.OnResultCallbackListener;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -38,11 +42,19 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import ooo.poorld.mycard.App;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.adapter.DataAdapter;
+import ooo.poorld.mycard.common.DataType;
+import ooo.poorld.mycard.entity.DaoSession;
+import ooo.poorld.mycard.entity.Data;
+import ooo.poorld.mycard.entity.DataDao;
 import ooo.poorld.mycard.entity.FileData;
 import ooo.poorld.mycard.utils.Constans;
+import ooo.poorld.mycard.utils.ConstansUtil;
+import ooo.poorld.mycard.utils.GlideEngine;
 import ooo.poorld.mycard.utils.Tools;
 import ooo.poorld.mycard.view.PopupGetPhoto;
 
@@ -62,6 +74,9 @@ public class DataManageActivity extends AppCompatActivity {
     private String mPath;
     private String mDataType;
     private PopupGetPhoto mPopupGetPhoto;
+
+    private DaoSession mDaoSession;
+    private DataDao mDataDao;
 
    /* private static final String PATH_DATA_DOCUMENT = getPath(Constans.DATA_PATH_DATA_DOCUMENT);
     private static final String PATH_DATA_MUSIC = getPath(Constans.DATA_PATH_DATA_MUSIC);
@@ -109,8 +124,10 @@ public class DataManageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // pickFile();
                 // selectFile();
+                // 如果是选择图片，则使用pictureSelector
                 if (Constans.DATA_PATH_DATA_IMAGE.equals(mDataType)) {
-                    mPopupGetPhoto.show(fab);
+                    // mPopupGetPhoto.show(fab);
+                    pictureSelect();
                 } else {
                     selectFile();
                 }
@@ -130,6 +147,9 @@ public class DataManageActivity extends AppCompatActivity {
             //小于6.0，不用申请权限，直接执行
             initFile();
         }
+
+        mDaoSession = ((App) getApplication()).getDaoSession();
+        mDataDao = mDaoSession.getDataDao();
 
     }
 
@@ -197,24 +217,133 @@ public class DataManageActivity extends AppCompatActivity {
 
     }
 
+
+    private void pictureSelect() {
+        //相册
+        PictureSelector.create(this)
+                .openGallery(PictureMimeType.ofImage())
+                .isCamera(true)
+                .imageEngine(GlideEngine.createGlideEngine())
+                .maxSelectNum(3)
+                .isCompress(true)
+                .minimumCompressSize(500)
+                .compressSavePath(ConstansUtil.getStoragePath())
+                .forResult(new OnResultCallbackListener<LocalMedia>() {
+                    @Override
+                    public void onResult(List<LocalMedia> result) {
+                        // 结果回调
+                        // 1.media.getPath(); 为原图path
+                        // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
+                        // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
+                        // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
+                        onPictureSelect(result);
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // 取消
+                    }
+                });
+    }
+
+
+    public void onPictureSelect(List<LocalMedia> result) {
+        File outputDir = new File(mPath);
+        Observable.fromArray(result)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .map(new Function<List<LocalMedia>, List<Data>>() {
+                    @Override
+                    public List<Data> apply(List<LocalMedia> localMedia) throws Exception {
+                        List<Data> datas = new ArrayList<>();
+                        for (LocalMedia media : localMedia) {
+                            long id = ConstansUtil.getUUIDNumber();
+
+                            String path = media.getPath();
+                            File input = new File(path);
+
+                            // // 获取后缀
+                            // String suffix = getSuffix(input.getName());
+                            // // 新文件名
+                            // String newFileName = id + suffix;
+
+                            File output = new File(outputDir, input.getName());
+
+                            Data data = new Data();
+                            data.setDataID(id);
+                            data.setDataName(input.getName());
+                            data.setFilePath(output.getPath());
+                            data.setDataType(DataType.valueOf(mDataType));
+
+                            datas.add(data);
+
+                            Tools.copy(input, output);
+                        }
+                        return datas;
+                    }
+                })
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<Data>>() {
+                    @Override
+                    public void accept(List<Data> datas) throws Exception {
+                        saveToDB(datas);
+                    }
+                });
+    }
+
+    /**
+     * 文件选完后
+     * @param uris
+     */
     public void onFileSelected(List<Uri> uris) {
         File outputDir = new File(mPath);
 
         Observable.fromArray(uris)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Uri>>() {
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .map(new Function<List<Uri>, List<Data>>() {
                     @Override
-                    public void accept(List<Uri> uris) throws Exception {
+                    public List<Data> apply(List<Uri> uris) throws Exception {
+                        List<Data> datas = new ArrayList<>();
                         for (Uri uri : uris) {
+                            long id = ConstansUtil.getUUIDNumber();
+
                             String path = uri.getPath();
-                            File input = new File(path);
-                            File output = new File(outputDir, input.getName());
-                            Tools.copy(input, output);
+                            File output = Tools.getFileFromUri(uri, DataManageActivity.this, mPath);
+                            /*File input = new File(path);
+
+                            // 获取后缀
+                            String suffix = getSuffix(input.getName());
+                            // 新文件名
+                            String newFileName = id + suffix;
+
+                            File output = new File(outputDir, newFileName);*/
+
+                            Data data = new Data();
+                            data.setDataID(id);
+                            data.setDataName(output.getName());
+                            data.setFilePath(output.getPath());
+                             data.setDataType(DataType.valueOf(mDataType));
+
+                            datas.add(data);
+
+                            // Tools.copy(input, output);
                         }
+                        return datas;
+                    }
+                })
+                .observeOn(Schedulers.io())
+                .subscribe(new Consumer<List<Data>>() {
+                    @Override
+                    public void accept(List<Data> datas) throws Exception {
+                        saveToDB(datas);
                     }
                 });
 
+    }
+
+    private void saveToDB(List<Data> datas) {
+        mDataDao.insertInTx(datas);
     }
 
     private void initFile() {
@@ -272,12 +401,12 @@ public class DataManageActivity extends AppCompatActivity {
 
 
     // 获取文件的真实路径
-    @Override
+/*    @Override
     protected void onActivityResult(final int requestCode, final int resultCode, @Nullable final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE && data != null) {
 
-            /*Uri uri = data.getData(); // 获取用户选择文件的URI
+            *//*Uri uri = data.getData(); // 获取用户选择文件的URI
             // 通过ContentProvider查询文件路径
             ContentResolver resolver = this.getContentResolver();
             Cursor cursor = resolver.query(uri, null, null, null, null);
@@ -290,7 +419,7 @@ public class DataManageActivity extends AppCompatActivity {
                 // 多媒体文件，从数据库中获取文件的真实路径
                 String path = cursor.getString(cursor.getColumnIndex("_data"));
             }
-            cursor.close();*/
+            cursor.close();*//*
 
             String pathResult = null;  // 获取图片路径的方法调用
             try {
@@ -302,105 +431,10 @@ public class DataManageActivity extends AppCompatActivity {
             }
         }
 
-    }
-
-    // 根据系统相册选择的文件获取路径
-    @SuppressLint("NewApi")
-    private String getPath(Uri uri) {
-        //        int sdkVersion = Build.VERSION.SDK_INT;
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-        // 高于4.4.2的版本
-        //        if (sdkVersion >= 19) {
-        if (isKitKat && DocumentsContract.isDocumentUri(this, uri)) {
-            Log.e("TAG", "uri auth: " + uri.getAuthority());
-            if (isExternalStorageDocument(uri)) {
-                String docId = DocumentsContract.getDocumentId(uri);
-                String[] split = docId.split(":");
-                String type = split[0];
-                if ("primary".equalsIgnoreCase(type)) {
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
-                }
-            } else if (isDownloadsDocument(uri)) {
-                final String id = DocumentsContract.getDocumentId(uri);
-                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"),
-                        Long.valueOf(id));
-                return getDataColumn(this, contentUri, null, null);
-            } else if (isMediaDocument(uri)) {
-                final String docId = DocumentsContract.getDocumentId(uri);
-                final String[] split = docId.split(":");
-                final String type = split[0];
-
-                Uri contentUri = null;
-                if ("image".equals(type)) {
-                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                } else if ("video".equals(type)) {
-                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
-                } else if ("audio".equals(type)) {
-                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-                }
-                final String selection = "_id=?";
-                final String[] selectionArgs = new String[]{split[1]};
-                return getDataColumn(this, contentUri, selection, selectionArgs);
-            } else if (isMedia(uri)) {
-                String[] proj = {MediaStore.Images.Media.DATA};
-                Cursor actualimagecursor = this.managedQuery(uri, proj, null, null, null);
-                int actual_image_column_index = actualimagecursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                actualimagecursor.moveToFirst();
-                return actualimagecursor.getString(actual_image_column_index);
-            }
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            // Return the remote address
-            if (isGooglePhotosUri(uri))
-                return uri.getLastPathSegment();
-            return getDataColumn(this, uri, null, null);
-
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) { // File
-            return uri.getPath();
-        }
-        return null;
-    }
-
-    private String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
-        Cursor cursor = null;
-        final String column = "_data";
-        final String[] projection = {column};
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs, null);
-            if (cursor != null && cursor.moveToFirst()) {
-                final int index = cursor.getColumnIndexOrThrow(column);
-                return cursor.getString(index);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return null;
-    }
+    }*/
 
 
-    private boolean isExternalStorageDocument(Uri uri) {
-        return "com.android.externalstorage.documents".equals(uri.getAuthority());
-    }
 
-    public static boolean isDownloadsDocument(Uri uri) {
-        return "com.android.providers.downloads.documents".equals(uri.getAuthority());
-    }
-
-    public static boolean isMediaDocument(Uri uri) {
-        return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }
-
-    public static boolean isMedia(Uri uri) {
-        return "media".equals(uri.getAuthority());
-    }
-
-    /**
-     * @param uri The Uri to check.
-     * @return Whether the Uri authority is Google Photos.
-     */
-    public static boolean isGooglePhotosUri(Uri uri) {
-        return "com.google.android.apps.photos.content".equals(uri.getAuthority());
-    }
 
     /**
      * 打开文件夹
