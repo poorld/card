@@ -273,7 +273,7 @@ public class DataManageActivity extends AppCompatActivity {
                             data.setDataID(id);
                             data.setDataName(input.getName());
                             data.setFilePath(output.getPath());
-                            data.setDataType(DataType.valueOf(mDataType));
+                            data.setDataType(DataType.valueOfName(mDataType).getType());
 
                             datas.add(data);
 
@@ -282,7 +282,7 @@ public class DataManageActivity extends AppCompatActivity {
                         return datas;
                     }
                 })
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Data>>() {
                     @Override
                     public void accept(List<Data> datas) throws Exception {
@@ -323,7 +323,7 @@ public class DataManageActivity extends AppCompatActivity {
                             data.setDataID(id);
                             data.setDataName(output.getName());
                             data.setFilePath(output.getPath());
-                             data.setDataType(DataType.valueOf(mDataType));
+                            data.setDataType(DataType.valueOfName(mDataType).getType());
 
                             datas.add(data);
 
@@ -332,7 +332,7 @@ public class DataManageActivity extends AppCompatActivity {
                         return datas;
                     }
                 })
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Data>>() {
                     @Override
                     public void accept(List<Data> datas) throws Exception {

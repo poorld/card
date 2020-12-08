@@ -27,11 +27,60 @@ public class Data {
      * 4我的视频
      */
     private Integer type;
-    @Convert(converter = DateTypeConverter.class, columnType = Integer.class)
+    // @Convert(converter = DateTypeConverter.class, columnType = Integer.class)
     private Integer dataType;
     //备注
     private String note;
     private String filePath;
+    @Generated(hash = 1538806525)
+    public Data(Long dataID, String dataName, Integer type, Integer dataType,
+            String note, String filePath) {
+        this.dataID = dataID;
+        this.dataName = dataName;
+        this.type = type;
+        this.dataType = dataType;
+        this.note = note;
+        this.filePath = filePath;
+    }
+    @Generated(hash = 2135787902)
+    public Data() {
+    }
+    public Long getDataID() {
+        return this.dataID;
+    }
+    public void setDataID(Long dataID) {
+        this.dataID = dataID;
+    }
+    public String getDataName() {
+        return this.dataName;
+    }
+    public void setDataName(String dataName) {
+        this.dataName = dataName;
+    }
+    public Integer getType() {
+        return this.type;
+    }
+    public void setType(Integer type) {
+        this.type = type;
+    }
+    public Integer getDataType() {
+        return this.dataType;
+    }
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
+    }
+    public String getNote() {
+        return this.note;
+    }
+    public void setNote(String note) {
+        this.note = note;
+    }
+    public String getFilePath() {
+        return this.filePath;
+    }
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 
     
 }

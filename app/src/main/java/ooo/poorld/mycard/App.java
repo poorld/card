@@ -4,6 +4,7 @@ import android.app.Application;
 
 import org.greenrobot.greendao.database.Database;
 
+import androidx.multidex.MultiDex;
 import ooo.poorld.mycard.entity.DaoMaster;
 import ooo.poorld.mycard.entity.DaoSession;
 
@@ -30,6 +31,9 @@ public class App extends Application {
         // Database db = helper.getEncryptedWritableDb("encryption-key");
 
         daoSession = new DaoMaster(db).newSession();
+
+        // 初始化MultiDex
+        MultiDex.install(this);
     }
 
     public DaoSession getDaoSession() {

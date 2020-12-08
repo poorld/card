@@ -18,9 +18,4 @@ public class ExampleUnitTest {
         assertEquals(4, 2 + 2);
     }
 
-    @Test
-    public void testEnum() {
-        DataType dataType = DataType.valueOfName(Constans.DATA_PATH_DATA_DOCUMENT);
-        System.out.println(dataType.getName());
-    }
 }

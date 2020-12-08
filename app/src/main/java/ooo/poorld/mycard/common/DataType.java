@@ -12,22 +12,24 @@ import ooo.poorld.mycard.utils.Constans;
  * description:
  */
 public enum  DataType {
-    TYPE_WORD(1),
-    TYPE_IMAGE(2),
-    TYPE_AUDIO(3),
-    TYPE_VIDEO(4),;
+    TYPE_WORD(1, Constans.DATA_PATH_DATA_DOCUMENT),
+    TYPE_IMAGE(2, Constans.DATA_PATH_DATA_IMAGE),
+    TYPE_AUDIO(3, Constans.DATA_PATH_DATA_MUSIC),
+    TYPE_VIDEO(4, Constans.DATA_PATH_DATA_VIDEO),;
+    private String name;
     private Integer type;
 
     private static final Map<String, DataType> MAP = new HashMap<>();
 
-    /*static {
+    static {
         for (DataType type : values()) {
             MAP.put(type.name, type);
         }
-    }*/
+    }
 
-    DataType(Integer type) {
+    DataType(Integer type,String name) {
         this.type = type;
+        this.name = name;
     }
 
     public Integer getType() {
@@ -37,17 +39,17 @@ public enum  DataType {
     public void setType(Integer type) {
         this.type = type;
     }
-/*
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }*/
+    }
 
     //获取枚举实例
-/*    public static DataType fromValue(Integer value) {
+    public static DataType fromValue(Integer value) {
         for (DataType val : values()) {
             if (val.getType().equals(value)) {
                 return val;
@@ -65,6 +67,6 @@ public enum  DataType {
             return name;
         }
         return toString();
-    }*/
+    }
 
 }
