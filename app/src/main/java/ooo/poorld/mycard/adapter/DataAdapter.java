@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.os.Build;
 import androidx.annotation.NonNull;
@@ -48,22 +49,38 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
         viewHolder.file_name.setText(fileData.getFileName());
 
         String fileType = fileData.getFileType().toLowerCase();
-
+        viewHolder.file_image.setVisibility(View.GONE);
+        viewHolder.file_image_type.setVisibility(View.VISIBLE);
         switch (fileType) {
             case "jpg":
             case "jpeg":
             case "png":
                 Bitmap bitmap = getThumb(fileData.getFilePath());
+                viewHolder.file_image.setVisibility(View.VISIBLE);
+                viewHolder.file_image_type.setVisibility(View.GONE);
                 viewHolder.file_image.setImageBitmap(bitmap);
                 // setDrawable(viewHolder.file_image, R.drawable.image);
                 break;
             case "mp3":
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_audio);
                 break;
             case "mp4":
-                setDrawable(viewHolder.file_image, R.drawable.video);
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_video);
+                break;
+            case "docx":
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_doc);
+                break;
+            case "doc":
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_doc);
+                break;
+            case "pdf":
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_pdf);
+                break;
+            case "xls":
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_xls);
                 break;
             default:
-                setDrawable(viewHolder.file_image, R.drawable.file);
+                setDrawable(viewHolder.file_image_type, R.drawable.file);
                 break;
         }
 
@@ -76,6 +93,11 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
                 }
             });
         }
+
+    }
+
+    private void setImage(boolean image1Show, boolean image2Show, Drawable drawable) {
+
     }
 
     /**
@@ -142,10 +164,12 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     class ViewHolder extends RecyclerView.ViewHolder {
         ImageView file_image;
+        ImageView file_image_type;
         TextView file_name;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             file_image = itemView.findViewById(R.id.file_image);
+            file_image_type = itemView.findViewById(R.id.file_image_type);
             file_name = itemView.findViewById(R.id.file_name);
         }
     }
