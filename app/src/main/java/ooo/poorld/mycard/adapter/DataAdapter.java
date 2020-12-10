@@ -1,5 +1,6 @@
 package ooo.poorld.mycard.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import java.util.List;
 import ooo.poorld.mycard.model.data.DataManageActivity;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.entity.FileData;
+import ooo.poorld.mycard.utils.Tools;
 
 /**
  * author: teenyda
@@ -69,15 +71,19 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
                 break;
             case "docx":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_doc);
+                startDoc(viewHolder);
                 break;
             case "doc":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_doc);
+                startDoc(viewHolder);
                 break;
             case "pdf":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_pdf);
+                startDoc(viewHolder);
                 break;
             case "xls":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_xls);
+                startDoc(viewHolder);
                 break;
             default:
                 setDrawable(viewHolder.file_image_type, R.drawable.file);
@@ -96,9 +102,15 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
 
     }
 
-    private void setImage(boolean image1Show, boolean image2Show, Drawable drawable) {
-
+    private void startDoc(ViewHolder viewHolder) {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tools.browseDocuments((Activity) mContext, 20001);
+            }
+        });
     }
+
 
     /**
      * 生成缩略图
