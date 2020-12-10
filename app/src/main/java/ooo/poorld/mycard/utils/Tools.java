@@ -370,32 +370,10 @@ public class Tools {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
-    public static void browseDocuments(Activity activity, Integer REQUEST_CODE_DOC){
-
-        String[] mimeTypes =
-                {"application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
-                        "application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
-                        "application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
-                        "text/plain",
-                        "application/pdf",
-                        "application/zip"};
-
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent.setType(mimeTypes.length == 1 ? mimeTypes[0] : "*/*");
-            if (mimeTypes.length > 0) {
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            }
-        } else {
-            String mimeTypesStr = "";
-            for (String mimeType : mimeTypes) {
-                mimeTypesStr += mimeType + "|";
-            }
-            intent.setType(mimeTypesStr.substring(0,mimeTypesStr.length() - 1));
-        }
-        activity.startActivityForResult(Intent.createChooser(intent,"ChooseFile"), REQUEST_CODE_DOC);
+    public static void browseDocuments(Activity activity,File file, int REQUEST_CODE_DOC){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+        activity.startActivity(intent);
 
     }
 }

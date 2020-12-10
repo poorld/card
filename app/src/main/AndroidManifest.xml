@@ -31,6 +31,23 @@
         <activity android:name=".model.card.AddCardActivity" />
         <activity android:name=".model.card.CardInfoAct" />
         <activity android:name=".model.data.DataMain" />
+
+        <provider
+            android:name=".common.MyFileProvider"
+            android:authorities="ooo.poorld.mycard.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/app_file_paths" />
+
+        </provider>
+
+
     </application>
+
+
+
+
 
 </manifest>

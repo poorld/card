@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.os.Build;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +17,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import io.zhuliang.appchooser.AppChooser;
+import ooo.poorld.mycard.BuildConfig;
 import ooo.poorld.mycard.model.data.DataManageActivity;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.entity.FileData;
@@ -71,26 +75,22 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
                 break;
             case "docx":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_doc);
-                startDoc(viewHolder);
                 break;
             case "doc":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_doc);
-                startDoc(viewHolder);
                 break;
             case "pdf":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_pdf);
-                startDoc(viewHolder);
                 break;
             case "xls":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_xls);
-                startDoc(viewHolder);
                 break;
             default:
                 setDrawable(viewHolder.file_image_type, R.drawable.file);
                 break;
         }
 
-        if (fileData.isDirectory()) {
+        /*if (fileData.isDirectory()) {
             setDrawable(viewHolder.file_image, R.drawable.directory);
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -98,15 +98,27 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
                     // DataManageActivity.startActivity(mContext, fileData.getFilePath());
                 }
             });
-        }
+        }*/
 
-    }
-
-    private void startDoc(ViewHolder viewHolder) {
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Tools.browseDocuments((Activity) mContext, 20001);
+                AppChooser.from((FragmentActivity) mContext)
+                        .file(new File(fileData.getFilePath()))
+                        .requestCode(20001)
+                        .authority(BuildConfig.APPLICATION_ID + ".fileprovider")
+                        .load();
+            }
+        });
+
+
+    }
+
+    private void startDoc(ViewHolder viewHolder, File file) {
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tools.browseDocuments((Activity) mContext, file,20001);
             }
         });
     }

@@ -1,5 +1,9 @@
 package ooo.poorld.mycard.utils;
 
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
+import net.lingala.zip4j.model.enums.EncryptionMethod;
+
 public class Constans {
 
     public static final String TAG = "TEENYDA";
@@ -66,6 +70,25 @@ public class Constans {
      * 备份资源路径/data/data/appname/file/backup/
      */
     public static final String DATA_PATH_BACKUP = "backup";
+
+
+    /**
+     * 压缩密码
+     */
+    public static final String COMP_PASS = "9527";
+
+    /**
+     * 压缩方式
+     */
+    public static final CompressionMethod COMP_DEFLATE = CompressionMethod.DEFLATE;
+    /**
+     * 压缩级别
+     */
+    public static final CompressionLevel DEFLATE_LEVEL_NORMAL = CompressionLevel.NORMAL;
+    /**
+     * 加密方式 aes
+     */
+    public static final EncryptionMethod ENC_METHOD_STANDARD = EncryptionMethod.AES;
 
 
 }
