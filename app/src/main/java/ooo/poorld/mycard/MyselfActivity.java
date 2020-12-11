@@ -55,7 +55,7 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
         File zipOutDir = ConstansUtil.getStorageDir(Constans.DATA_PATH_BACKUP);
         File dataDir = ConstansUtil.getBaseDir();
 
-        File zipOutFile = new File(ConstansUtil.getStorage(), "back.zip");
+        File zipOutFile = new File(zipOutDir, "back.zip");
 
         /*ZipUtils.compressFolder(zipOutFile.getPath(), null, dataDir.getPath(), new ExcludeFileFilter() {
             @Override
@@ -66,22 +66,7 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
                 return false;
             }
         });*/
-        ZipFile zipFile = new ZipFile(zipOutFile.getPath());
-        ZipParameters parameters = new ZipParameters();
-        parameters.setCompressionMethod(Constans.COMP_DEFLATE); // 压缩方式
-        parameters.setCompressionLevel(Constans.DEFLATE_LEVEL_NORMAL); // 压缩级别
-        File[] list = dataDir.listFiles();
-        // 遍历test文件夹下所有的文件、文件夹
-        try {
-            for (File f : list) {
-                if (f.isDirectory()) {
-                    zipFile.addFolder(f, parameters);
-                } else {
-                    zipFile.addFile(f, parameters);
-                }
-            }
-        } catch (ZipException e) {
-            e.printStackTrace();
-        }
+        String zip = ZipUtils.zip(dataDir.getPath(), zipOutFile.getPath(), true, null);
+
     }
 }

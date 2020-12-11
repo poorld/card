@@ -53,10 +53,21 @@ public class ConstansUtil {
     public static String getExternalFilesPath(Context context, String path, String fileName) {
         return getExternalFilesDir(context, path + File.separator + fileName).getAbsolutePath();
     }
+
+    /**
+     * 获取
+     * @param context
+     * @param path
+     * @return
+     */
     public static File getDataDir(Context context, String path) {
         return context.getDir(path, Context.MODE_PRIVATE);
     }
 
+    /**
+     * 获取存储根目录/storage/emulated/0
+     * @return
+     */
     public static File getStorage() {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
            return Environment.getExternalStorageDirectory();
@@ -65,6 +76,10 @@ public class ConstansUtil {
         return null;
     }
 
+    /**
+     * 获取数据存储目录/storage/emulated/0/mycard
+     * @return
+     */
     public static File getBaseDir() {
         return new File(getStorage(), Constans.BASE_PATH);
     }
