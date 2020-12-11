@@ -71,6 +71,14 @@ public class Tools {
         return null;
     }
 
+    public static String getTimeString(String pattern) {
+        return new SimpleDateFormat(pattern).format(new Date());
+    }
+
+    public static String getTimeString(long time, String pattern) {
+        return new SimpleDateFormat(pattern).format(time);
+    }
+
     public static void copy(File inputFile, File outputFile) {
 
         try {

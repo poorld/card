@@ -14,7 +14,10 @@ public class Constans {
 
 //    public final static  String BaseUrl = "http://120.78.186.81/api/";
 //    public final static  String BaseUrl = "http://192.168.43.93:9000/api/app/";
-    public final static  String BaseUrl = "http://192.168.1.66:9000/api/app/";
+    public final static  String BaseUrl = "http://192.168.2.25:9000/api/app/";
+    public final static  String uploadUrl = BaseUrl + "file/upload";
+    public final static  String downloadUrl = BaseUrl + "file/downloadFile/";
+
 
     public final static  String retrofit = "values/5";
     public final static  String retrofitList = "values";
@@ -61,6 +64,12 @@ public class Constans {
      * 资料资源路径/data/data/appname/file/data/
      */
     public static final String DATA_PATH_DATA = "data";
+
+    /**
+     * 数据库备份路径/data/data/appname/file/db/
+     */
+    public static final String DATA_PATH_DB = "db";
+
     public static final String DATA_PATH_DATA_DOCUMENT = "我的文档";
     public static final String DATA_PATH_DATA_IMAGE = "我的图片";
     public static final String DATA_PATH_DATA_MUSIC = "我的音乐";

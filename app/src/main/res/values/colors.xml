@@ -10,4 +10,6 @@
     <color name="c_ffd473">#ffd473</color>
     <color name="c_ffba1e">#ffba1e</color>
     <color name="c_d99600">#d99600</color>
+    <color name="black">#000</color>
+    <color name="transparent">#00000000</color>
 </resources>

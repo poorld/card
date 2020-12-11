@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -73,50 +74,42 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void createDir() {
-        // File certFile = ConstansUtil.getExternalFilesDir(this, Constans.DATA_PATH_CERT);
-        // File cardFile = ConstansUtil.getExternalFilesDir(this, Constans.DATA_PATH_CARD);
-        // File dataFile = ConstansUtil.getExternalFilesDir(this, Constans.DATA_PATH_DATA);
-        // File backupFile = ConstansUtil.getExternalFilesDir(this, Constans.DATA_PATH_BACKUP);
-        //
-        // List<File> files = new ArrayList<>();
-        // files.add(cardFile);
-        // files.add(cardFile);
-        // files.add(dataFile);
-        // files.add(backupFile);
 
-        // File dataDir = ConstansUtil.getExternalFilesDir(this, Constans.DATA_PATH_CERT);
-        // dataDir.mkdirs();
-        // ConstansUtil.getDataDir(this,"/files/" + Constans.DATA_PATH_CARD);
-        // ConstansUtil.getDataDir(this,"/files/" + Constans.DATA_PATH_DATA);
-        // ConstansUtil.getDataDir(this,"/files/" + Constans.DATA_PATH_BACKUP);
-
+        // /storage/emulated/0/mycard
         File root = ConstansUtil.getBaseDir();
         if (root.exists()) {
             root.mkdir();
         }
 
-        List<File> files = new ArrayList<>();
-        File cert = new File(root, Constans.DATA_PATH_CERT);
-        File card = new File(root, Constans.DATA_PATH_CARD);
+        // /storage/emulated/0/mycard/data
         File data = new File(root, Constans.DATA_PATH_DATA);
-        File backup = new File(root, Constans.DATA_PATH_BACKUP);
-        String dataAbsolutePath = data.getAbsolutePath();
-        File data_document = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_DOCUMENT);
-        File data_image = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_IMAGE);
-        File data_music = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_MUSIC);
-        File data_video = new File(dataAbsolutePath, Constans.DATA_PATH_DATA_VIDEO);
-        files.add(cert);
-        files.add(card);
+        String dataPath = data.getPath();
+
+        List<File> files = Arrays.asList(
+                // /storage/emulated/0/mycard/cert 证件
+                new File(root, Constans.DATA_PATH_CERT),
+                // /storage/emulated/0/mycard/card 卡片
+                new File(root, Constans.DATA_PATH_CARD),
+                // /storage/emulated/0/mycard/data 各模块
+                // new File(root, Constans.DATA_PATH_DATA),
+                // /storage/emulated/0/mycard/back 备份
+                new File(root, Constans.DATA_PATH_BACKUP),
+                // /storage/emulated/0/mycard/db 数据库备份
+                new File(root, Constans.DATA_PATH_DB),
+                // /storage/emulated/0/mycard/data/我的文档
+                new File(dataPath, Constans.DATA_PATH_DATA_DOCUMENT),
+                // /storage/emulated/0/mycard/data/我的图片
+                new File(dataPath, Constans.DATA_PATH_DATA_IMAGE),
+                // /storage/emulated/0/mycard/data/我的音乐
+                new File(dataPath, Constans.DATA_PATH_DATA_MUSIC),
+                // /storage/emulated/0/mycard/data/我的视频
+                new File(dataPath, Constans.DATA_PATH_DATA_VIDEO));
+
         files.add(data);
-        files.add(backup);
-        files.add(data_document);
-        files.add(data_image);
-        files.add(data_music);
-        files.add(data_video);
 
         for (File file : files) {
             if (!file.exists()) {
-                file.mkdir();
+                file.mkdirs();
             }
         }
 
