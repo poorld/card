@@ -82,9 +82,6 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
      * 恢复备份
      */
     private void recovery() {
-
-
-
         String url = Constans.upload_last;
         OkhttpUtil.okHttpGet(url, new CallBackUtil.CallBackString() {
             @Override
@@ -149,9 +146,10 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
                 super.onProgress(progress, total);
                 if (!inited) {
                     inited = true;
-                    myProgressBar.initDialog((int) total);
+                    int t = (int) (total / 1024 / 1024 * 1000);
+                    myProgressBar.initDialog(t);
                 }
-                myProgressBar.setProgress((int) progress);
+                myProgressBar.setProgress((int) (progress * 1000));
             }
         });
     }
@@ -167,6 +165,7 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onResponse(String response) {
                 myProgressBar.colseDialog();
+                inited = false;
                 Toast.makeText(MyselfActivity.this, "备份成功", Toast.LENGTH_SHORT).show();
             }
         });
@@ -202,10 +201,23 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
                 try {
                     ZipUtils.unzip(zipOutFile.getPath(), storage.getPath(), null);
                     mTask.doInBackground(BackupTask.COMMAND_RESTORE);
+                    myProgressBar.colseDialog();
+                    inited = false;
                     Toast.makeText(MyselfActivity.this, "恢复成功", Toast.LENGTH_SHORT).show();
                 } catch (ZipException e) {
                     e.printStackTrace();
                 }
+            }
+
+            @Override
+            public void onProgress(float progress, long total) {
+                super.onProgress(progress, total);
+                if (!inited) {
+                    inited = true;
+                    int t = (int) (total / 1024 / 1024 * 1000);
+                    myProgressBar.initDialog(t);
+                }
+                myProgressBar.setProgress((int)(progress * 1000));
             }
         });
     }

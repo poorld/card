@@ -330,7 +330,7 @@ class RequestUtil {
                     super.write(source, byteCount);//这个方法会循环调用，byteCount是每次调用上传的字节数。
                     if (contentLength == 0) {
                         //获得总字节长度
-                        contentLength = contentLength();
+                        contentLength = contentLength() / 1024*1024;
                     }
                     //增加当前写入的字节数
                     bytesWritten += byteCount;
@@ -410,6 +410,7 @@ class RequestUtil {
                 }
             };
         }
+
     }
 
 

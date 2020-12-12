@@ -19,6 +19,7 @@ public class Upload implements Serializable {
     private String filePath;
 
     private String uploadDate;
+    private long fileSize;
 
 
     public Integer getId() {
