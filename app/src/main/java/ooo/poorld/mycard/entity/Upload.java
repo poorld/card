@@ -54,4 +54,11 @@ public class Upload implements Serializable {
         this.uploadDate = uploadDate;
     }
 
+    public long getFileSize() {
+        return fileSize;
+    }
+
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
 }

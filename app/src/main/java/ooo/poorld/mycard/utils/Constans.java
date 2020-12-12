@@ -29,6 +29,10 @@ public class Constans {
      */
     public final static  String upload_last = BaseUrl + "card/last";
 
+    /**
+     * 获取10条备份数据
+     */
+    public final static  String backup_list = BaseUrl + "card/list";
 
     public final static  String retrofit = "values/5";
     public final static  String retrofitList = "values";

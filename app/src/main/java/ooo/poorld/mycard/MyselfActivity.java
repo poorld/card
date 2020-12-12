@@ -8,9 +8,12 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import net.lingala.zip4j.exception.ZipException;
 
@@ -18,7 +21,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +39,7 @@ import ooo.poorld.mycard.utils.ZipUtils;
 import ooo.poorld.mycard.utils.okhttp.CallBackUtil;
 import ooo.poorld.mycard.utils.okhttp.OkhttpUtil;
 import ooo.poorld.mycard.view.MyProgressBar;
+import ooo.poorld.mycard.view.PopupBackup;
 
 /**
  * author: teenyda
@@ -51,6 +57,8 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
     private BackupTask mTask;
     private boolean inited = false;
 
+    private PopupBackup mPopupBackup;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +72,15 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
 
         // 备份数据库
         mTask = new BackupTask(this);
+
+        mPopupBackup = new PopupBackup(this);
+        mPopupBackup.setItemClickListener(new PopupBackup.ItemClickListener() {
+            @Override
+            public void onItemClick(Upload upload) {
+                downloadBackup(upload);
+            }
+        });
+
     }
 
     @Override
@@ -82,7 +99,9 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
      * 恢复备份
      */
     private void recovery() {
-        String url = Constans.upload_last;
+
+
+        String url = Constans.backup_list;
         OkhttpUtil.okHttpGet(url, new CallBackUtil.CallBackString() {
             @Override
             public void onFailure(Call call, Exception e) {
@@ -91,12 +110,16 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
 
             @Override
             public void onResponse(String response) {
-                downloadBackup(response);
+                JsonObject jo = new JsonParser().parse(response).getAsJsonObject();
+                JsonElement data = jo.get("data");
+                Type type = new TypeToken<List<Upload>>(){}.getType();
+
+                List<Upload> uploads = new Gson().fromJson(data, type);
+                mPopupBackup.addUploadDatas(uploads);
+                mPopupBackup.show(upload);
+
             }
         });
-
-
-
     }
 
     /**
@@ -138,6 +161,7 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
                 upload.setId((int) ConstansUtil.getUUIDNumber());
                 upload.setFileName(resp.getFileName());
                 upload.setFilePath(resp.getFileDownloadUrl());
+                upload.setFileSize(zipOutFile.length());
                 saveUpload(upload);
             }
 
@@ -171,7 +195,7 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
         });
     }
 
-    private void downloadBackup(String response) {
+    private void downloadBackup(Upload upload) {
 
         File storage = ConstansUtil.getStorage();
         File zipOutDir = ConstansUtil.getStorageDir(Constans.DATA_PATH_BACKUP);
@@ -180,9 +204,10 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
             zipOutFile.delete();
         }
 
-        JsonObject jo = new JsonParser().parse(response).getAsJsonObject();
+        /*JsonObject jo = new JsonParser().parse(response).getAsJsonObject();
         JsonElement data = jo.get("data");
-        Upload upload = new Gson().fromJson(data, Upload.class);
+        Upload upload = new Gson().fromJson(data, Upload.class);*/
+
         String downloadUrl = Constans.downloadUrl + upload.getFileName();
 
         OkhttpUtil.okHttpDownloadFile(downloadUrl, new CallBackUtil.CallBackFile(zipOutFile.getParent(), zipOutFile.getName()) {
