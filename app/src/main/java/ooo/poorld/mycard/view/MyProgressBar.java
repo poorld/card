@@ -31,7 +31,7 @@ public class MyProgressBar {
     /**
      * 初始化进度对话框
      */
-    public void initDialog() {
+    public void initDialog(int max) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.myprogressbar, null);
@@ -40,7 +40,7 @@ public class MyProgressBar {
         // 设置进度条是否自动旋转,即设置其不确定模式,false表示不自动旋转
         pro1.setIndeterminate(false);
         // 设置ProgressBar的最大值
-        pro1.setMax(100);
+        pro1.setMax(max);
         // 设置ProgressBar的当前值
         pro1.setProgress(0);
         dialog.show();

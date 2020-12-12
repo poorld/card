@@ -11,12 +11,23 @@ public class Constans {
     //设置默认超时时间
     public static final int DEFAULT_TIME=10;
 
+    /**
+     * 数据库名称
+     */
+    public static final String DB_NAME = "notes-db";
+
 
 //    public final static  String BaseUrl = "http://120.78.186.81/api/";
 //    public final static  String BaseUrl = "http://192.168.43.93:9000/api/app/";
     public final static  String BaseUrl = "http://192.168.2.25:9000/api/app/";
     public final static  String uploadUrl = BaseUrl + "file/upload";
     public final static  String downloadUrl = BaseUrl + "file/downloadFile/";
+
+    public final static  String upload_save = BaseUrl + "card/add";
+    /**
+     * 获取最后一次备份数据
+     */
+    public final static  String upload_last = BaseUrl + "card/last";
 
 
     public final static  String retrofit = "values/5";

@@ -1,28 +1,35 @@
 package ooo.poorld.mycard;
 
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ExcludeFileFilter;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.model.enums.AesKeyStrength;
-import net.lingala.zip4j.model.enums.EncryptionMethod;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Date;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Response;
+import ooo.poorld.mycard.entity.FileUploadResponse;
+import ooo.poorld.mycard.entity.Upload;
 import ooo.poorld.mycard.utils.BackupTask;
 import ooo.poorld.mycard.utils.Constans;
 import ooo.poorld.mycard.utils.ConstansUtil;
+import ooo.poorld.mycard.utils.Tools;
 import ooo.poorld.mycard.utils.ZipUtils;
 import ooo.poorld.mycard.utils.okhttp.CallBackUtil;
 import ooo.poorld.mycard.utils.okhttp.OkhttpUtil;
@@ -41,7 +48,8 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
     private TextView download;
 
     private MyProgressBar myProgressBar;
-
+    private BackupTask mTask;
+    private boolean inited = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,39 +61,51 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
         download.setOnClickListener(this);
 
         myProgressBar = new MyProgressBar(MyselfActivity.this);
-        myProgressBar.initDialog();
+
+        // 备份数据库
+        mTask = new BackupTask(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.upload:
-                zip();
+                backup();
                 break;
             case R.id.download:
-                unzip();
+                recovery();
                 break;
         }
     }
 
-    private void unzip() {
-        File zipOutDir = ConstansUtil.getStorageDir(Constans.DATA_PATH_BACKUP);
-        File storage = ConstansUtil.getStorage();
+    /**
+     * 恢复备份
+     */
+    private void recovery() {
 
-        File zipOutFile = new File(zipOutDir, "back.zip");
-        if (!zipOutFile.exists()) {
-            Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        try {
-            ZipUtils.unzip(zipOutFile.getPath(), storage.getPath(), null);
-        } catch (ZipException e) {
-            e.printStackTrace();
-        }
+
+        String url = Constans.upload_last;
+        OkhttpUtil.okHttpGet(url, new CallBackUtil.CallBackString() {
+            @Override
+            public void onFailure(Call call, Exception e) {
+
+            }
+
+            @Override
+            public void onResponse(String response) {
+                downloadBackup(response);
+            }
+        });
+
+
+
     }
 
-    private void zip() {
+    /**
+     * 备份
+     */
+    private void backup() {
         File zipOutDir = ConstansUtil.getStorageDir(Constans.DATA_PATH_BACKUP);
         File dataDir = ConstansUtil.getBaseDir();
 
@@ -94,9 +114,8 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
             zipOutFile.delete();
         }
 
-        // 备份数据库
-        BackupTask task = new BackupTask(this);
-        task.doInBackground(BackupTask.COMMAND_BACKUP);
+
+        mTask.doInBackground(BackupTask.COMMAND_BACKUP);
 
         // 压缩文件
         String zipPath = ZipUtils.zip(dataDir.getPath(), zipOutFile.getPath(), true, null);
@@ -106,26 +125,87 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
         String fileType = OkhttpUtil.FILE_TYPE_FILE;
 
         // 上传文件
-        OkhttpUtil.okHttpUploadFile(url, zipOutFile, fileKey, fileType, new CallBackUtil() {
-            @Override
-            public Object onParseResponse(Call call, Response response) {
-                return null;
-            }
+        OkhttpUtil.okHttpUploadFile(url, zipOutFile, fileKey, fileType, new CallBackUtil.CallBackString() {
 
             @Override
             public void onFailure(Call call, Exception e) {
-
+                myProgressBar.colseDialog();
             }
 
             @Override
-            public void onResponse(Object response) {
-
+            public void onResponse(String response) {
+                JsonObject jo = new JsonParser().parse(response).getAsJsonObject();
+                JsonElement data = jo.get("data");
+                FileUploadResponse resp = new Gson().fromJson(data, FileUploadResponse.class);
+                Upload upload = new Upload();
+                upload.setId((int) ConstansUtil.getUUIDNumber());
+                upload.setFileName(resp.getFileName());
+                upload.setFilePath(resp.getFileDownloadUrl());
+                saveUpload(upload);
             }
 
             @Override
             public void onProgress(float progress, long total) {
                 super.onProgress(progress, total);
+                if (!inited) {
+                    inited = true;
+                    myProgressBar.initDialog((int) total);
+                }
                 myProgressBar.setProgress((int) progress);
+            }
+        });
+    }
+
+    private void saveUpload(Upload upload) {
+        String url = Constans.upload_save;
+        OkhttpUtil.okHttpPostJson(url, new Gson().toJson(upload), new CallBackUtil.CallBackString() {
+            @Override
+            public void onFailure(Call call, Exception e) {
+                myProgressBar.colseDialog();
+            }
+
+            @Override
+            public void onResponse(String response) {
+                myProgressBar.colseDialog();
+                Toast.makeText(MyselfActivity.this, "备份成功", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void downloadBackup(String response) {
+
+        File storage = ConstansUtil.getStorage();
+        File zipOutDir = ConstansUtil.getStorageDir(Constans.DATA_PATH_BACKUP);
+        File zipOutFile = new File(zipOutDir, "back.zip");
+        if (zipOutFile.exists()) {
+            zipOutFile.delete();
+        }
+
+        JsonObject jo = new JsonParser().parse(response).getAsJsonObject();
+        JsonElement data = jo.get("data");
+        Upload upload = new Gson().fromJson(data, Upload.class);
+        String downloadUrl = Constans.downloadUrl + upload.getFileName();
+
+        OkhttpUtil.okHttpDownloadFile(downloadUrl, new CallBackUtil.CallBackFile(zipOutFile.getParent(), zipOutFile.getName()) {
+            @Override
+            public void onFailure(Call call, Exception e) {
+                Toast.makeText(MyselfActivity.this, "下载失败", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(File response) {
+                if (!zipOutFile.exists()) {
+                    Toast.makeText(MyselfActivity.this, "文件不存在", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    ZipUtils.unzip(zipOutFile.getPath(), storage.getPath(), null);
+                    mTask.doInBackground(BackupTask.COMMAND_RESTORE);
+                    Toast.makeText(MyselfActivity.this, "恢复成功", Toast.LENGTH_SHORT).show();
+                } catch (ZipException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

@@ -48,8 +48,12 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         viewHolder.card_name.setText(card.getCardName());
         String cardNumber = card.getCardNumber();
         int length = cardNumber.length();
-        String num = length > 8 ? cardNumber.substring(0,3) + "********" + cardNumber.substring(length - 4,length -1):
-                cardNumber.substring(0,2) + "**************";
+        String num;
+        if (length > 8) {
+            num = cardNumber.substring(0, 3) + "********" + cardNumber.substring(length - 4, length - 1);
+        } else {
+            num = "****************";
+        }
         viewHolder.card_num.setText(num);
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -21,7 +21,7 @@ import java.nio.channels.FileChannel;
  */
 public class BackupTask {
     public static final String COMMAND_BACKUP = "backupDatabase";
-    private static final String COMMAND_RESTORE = "restoreDatabase";
+    public static final String COMMAND_RESTORE = "restoreDatabase";
     private final static String EXTERNAL_STORAGE_FOLDER = "Never Forget";
     private final static String EXTERNAL_STORAGE_BACKUP_DIR = "Backup";
     public String backup_version;
@@ -39,9 +39,9 @@ public class BackupTask {
     }
 
     public String doInBackground(String command) {
-        File dbFile = mContext.getDatabasePath("event_database");// 默认路径是 /data/data/(包名)/databases/*
-        File dbFile_shm = mContext.getDatabasePath("event_database-shm");// 默认路径是 /data/data/(包名)/databases/*
-        File dbFile_wal = mContext.getDatabasePath("event_database-wal");// 默认路径是 /data/data/(包名)/databases/*
+        File dbFile = mContext.getDatabasePath(Constans.DB_NAME);// 默认路径是 /data/data/(包名)/databases/*
+        File dbFile_shm = mContext.getDatabasePath(Constans.DB_NAME + "-shm");// 默认路径是 /data/data/(包名)/databases/*
+        File dbFile_wal = mContext.getDatabasePath(Constans.DB_NAME + "-wal");// 默认路径是 /data/data/(包名)/databases/*
         File exportDir = getDBBackupDir();
         if (!exportDir.exists()){
             exportDir.mkdirs();

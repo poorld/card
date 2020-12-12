@@ -7,6 +7,7 @@ import org.greenrobot.greendao.database.Database;
 import androidx.multidex.MultiDex;
 import ooo.poorld.mycard.entity.DaoMaster;
 import ooo.poorld.mycard.entity.DaoSession;
+import ooo.poorld.mycard.utils.Constans;
 
 /**
  * author: teenyda
@@ -22,7 +23,7 @@ public class App extends Application {
         super.onCreate();
 
         // regular SQLite database
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "notes-db");
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, Constans.DB_NAME);
         Database db = helper.getWritableDb();
 
         // encrypted SQLCipher database

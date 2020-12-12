@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         // /storage/emulated/0/mycard
         File root = ConstansUtil.getBaseDir();
-        if (root.exists()) {
+        if (!root.exists()) {
             root.mkdir();
         }
 
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         File data = new File(root, Constans.DATA_PATH_DATA);
         String dataPath = data.getPath();
 
-        List<File> files = Arrays.asList(
+        List<File> files = new ArrayList<>(Arrays.asList(
                 // /storage/emulated/0/mycard/cert 证件
                 new File(root, Constans.DATA_PATH_CERT),
                 // /storage/emulated/0/mycard/card 卡片
@@ -103,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
                 // /storage/emulated/0/mycard/data/我的音乐
                 new File(dataPath, Constans.DATA_PATH_DATA_MUSIC),
                 // /storage/emulated/0/mycard/data/我的视频
-                new File(dataPath, Constans.DATA_PATH_DATA_VIDEO));
+                new File(dataPath, Constans.DATA_PATH_DATA_VIDEO))
+        );
 
         files.add(data);
 
