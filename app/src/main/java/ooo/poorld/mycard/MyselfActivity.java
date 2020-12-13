@@ -2,6 +2,7 @@ package ooo.poorld.mycard;
 
 import android.os.Bundle;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,12 +35,15 @@ import ooo.poorld.mycard.entity.Upload;
 import ooo.poorld.mycard.utils.BackupTask;
 import ooo.poorld.mycard.utils.Constans;
 import ooo.poorld.mycard.utils.ConstansUtil;
+import ooo.poorld.mycard.utils.FileUtils;
 import ooo.poorld.mycard.utils.Tools;
 import ooo.poorld.mycard.utils.ZipUtils;
 import ooo.poorld.mycard.utils.okhttp.CallBackUtil;
 import ooo.poorld.mycard.utils.okhttp.OkhttpUtil;
 import ooo.poorld.mycard.view.MyProgressBar;
 import ooo.poorld.mycard.view.PopupBackup;
+
+import static ooo.poorld.mycard.utils.Constans.TAG;
 
 /**
  * author: teenyda
@@ -171,9 +175,12 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
                 if (!inited) {
                     inited = true;
                     int t = (int) (total / 1024 / 1024 * 1000);
-                    myProgressBar.initDialog(t);
+                    Log.d(TAG, "Total: " + t);
+                    myProgressBar.setMax(100);
+                    myProgressBar.setTitle("正在备份...");
                 }
-                myProgressBar.setProgress((int) (progress * 1000));
+                Log.d(TAG, "onProgress: " + progress * 100);
+                myProgressBar.setProgress((int) (progress * 100));
             }
         });
     }
@@ -196,7 +203,8 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void downloadBackup(Upload upload) {
-
+        File baseDir = ConstansUtil.getBaseDir();
+        FileUtils.deleteDirectory(baseDir.getPath());
         File storage = ConstansUtil.getStorage();
         File zipOutDir = ConstansUtil.getStorageDir(Constans.DATA_PATH_BACKUP);
         File zipOutFile = new File(zipOutDir, "back.zip");
@@ -240,9 +248,12 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
                 if (!inited) {
                     inited = true;
                     int t = (int) (total / 1024 / 1024 * 1000);
-                    myProgressBar.initDialog(t);
+                    Log.d(TAG, "Total: " + t);
+                    myProgressBar.setMax(100);
+                    myProgressBar.setTitle("正在恢复备份...");
                 }
-                myProgressBar.setProgress((int)(progress * 1000));
+                Log.d(TAG, "onProgress: " + progress);
+                myProgressBar.setProgress((int)(progress));
             }
         });
     }

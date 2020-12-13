@@ -53,8 +53,8 @@ public class PopupBackup {
 
     private void initPopup() {
         mView = LayoutInflater.from(mContext).inflate(R.layout.popup_backup, null);
-        mPopupWindow = new PopupWindow(mView, ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        mPopupWindow = new PopupWindow(mView, ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
 
         mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mPopupWindow.setAnimationStyle(R.style.AnimationBottomInAndOut);

@@ -1,11 +1,10 @@
-package ooo.poorld.mycard.adapter;
+package ooo.poorld.mycard.model.data.adapter;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.os.Build;
 import androidx.annotation.NonNull;
@@ -23,7 +22,6 @@ import java.util.List;
 
 import io.zhuliang.appchooser.AppChooser;
 import ooo.poorld.mycard.BuildConfig;
-import ooo.poorld.mycard.model.data.DataManageActivity;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.entity.FileData;
 import ooo.poorld.mycard.utils.Tools;
@@ -83,6 +81,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_pdf);
                 break;
             case "xls":
+            case "xlsx":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_xls);
                 break;
             default:

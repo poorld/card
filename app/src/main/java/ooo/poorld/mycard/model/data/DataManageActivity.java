@@ -1,21 +1,15 @@
 package ooo.poorld.mycard.model.data;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,7 +20,6 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.listener.OnResultCallbackListener;
 
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,7 +39,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import ooo.poorld.mycard.App;
 import ooo.poorld.mycard.R;
-import ooo.poorld.mycard.adapter.DataAdapter;
+import ooo.poorld.mycard.model.data.adapter.DataAdapter;
 import ooo.poorld.mycard.common.DataType;
 import ooo.poorld.mycard.entity.DaoSession;
 import ooo.poorld.mycard.entity.Data;
@@ -363,6 +356,9 @@ public class DataManageActivity extends AppCompatActivity {
             directory_data = new File(mPath);
         }
 
+        if (directory_data == null) {
+            return;
+        }
 
         // if(!directory_data.exists()){//判断文件目录是否存在
         //     directory_data.mkdirs();

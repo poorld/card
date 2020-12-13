@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="150dp"
+    android:layout_gravity="center_vertical"
+    android:layout_marginStart="@dimen/offset_30"
+    android:layout_marginEnd="@dimen/offset_30"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/shape_backup_radius">
     <TextView
+        android:id="@+id/progress_tv"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="正在上传备份...."
         android:textSize="18sp"
-        android:textColor="@color/black" />
+        android:textColor="@color/c_ffffff" />
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
