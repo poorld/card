@@ -12,4 +12,12 @@
     <color name="c_d99600">#d99600</color>
     <color name="black">#000</color>
     <color name="transparent">#00000000</color>
+    <color name="c_2c2c2c">#2c2c2c</color>
+    <color name="c_eeeeee">#eeeeee</color>
+    <color name="c_5866fa">#5866fa</color>
+    <color name="c_fff3d9">#fff3d9</color>
+    <color name="c_000000">#000000</color>
+    <color name="c_e5e5e5">#e5e5e5</color>
+    <color name="c_ffeec8">#ffeec8</color>
+    <color name="c_ffe4a6">#ffe4a6</color>
 </resources>

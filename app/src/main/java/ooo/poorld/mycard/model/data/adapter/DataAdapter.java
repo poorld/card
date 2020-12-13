@@ -15,14 +15,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.zhuliang.appchooser.AppChooser;
 import ooo.poorld.mycard.BuildConfig;
+import ooo.poorld.mycard.MyselfActivity;
 import ooo.poorld.mycard.R;
+import ooo.poorld.mycard.common.CommonPopView;
 import ooo.poorld.mycard.entity.FileData;
 import ooo.poorld.mycard.utils.Tools;
 
@@ -34,10 +38,31 @@ import ooo.poorld.mycard.utils.Tools;
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     private Context mContext;
     private List<FileData> mFileData;
+    private CommonPopView mCommonPopView;
+    private FileDeletedListener mFileDeletedListener;
 
-    public DataAdapter(Context context, List<FileData> fileData) {
+    public DataAdapter(Context context) {
         this.mContext = context;
-        this.mFileData = fileData;
+        this.mFileData = new ArrayList<>();
+        this.mCommonPopView = new CommonPopView(context);
+        mCommonPopView.setTitle("提示");
+        mCommonPopView.setMessage("您确定要删除该文件吗？");
+        mCommonPopView.setLeftTitle("取消");
+        mCommonPopView.setRightTitle("确定");
+    }
+
+    public interface FileDeletedListener{
+        void onFileDeleted(FileData fileData);
+    }
+
+    public void setFileDeletedListener(FileDeletedListener fileDeletedListener) {
+        this.mFileDeletedListener = fileDeletedListener;
+    }
+
+    public void addFile(List<FileData> fileData) {
+        mFileData.clear();
+        mFileData.addAll(fileData);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -99,6 +124,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
             });
         }*/
 
+        // 选择打开方式
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,7 +135,34 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
                         .load();
             }
         });
+        // 长按删除
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                mCommonPopView.show(viewHolder.file_name, fileData);
+                return true;
+            }
+        });
 
+        mCommonPopView.setOnBtnClick(new CommonPopView.OnBtnClick() {
+            @Override
+            public void onLeftClick(FileData fileData) {
+                mCommonPopView.dismiss();
+            }
+
+            @Override
+            public void onRightClick(FileData fileData) {
+                String filePath = fileData.getFilePath();
+                File file = new File(filePath);
+                if (file.delete()) {
+                    Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
+                }
+                if (mFileDeletedListener != null) {
+                    mFileDeletedListener.onFileDeleted(fileData);
+                }
+                mCommonPopView.dismiss();
+            }
+        });
 
     }
 

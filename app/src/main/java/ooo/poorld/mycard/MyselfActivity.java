@@ -154,6 +154,7 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onFailure(Call call, Exception e) {
                 myProgressBar.colseDialog();
+                Toast.makeText(MyselfActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

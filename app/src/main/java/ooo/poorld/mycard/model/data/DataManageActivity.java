@@ -70,6 +70,7 @@ public class DataManageActivity extends AppCompatActivity {
 
     private DaoSession mDaoSession;
     private DataDao mDataDao;
+    private DataAdapter mDataAdapter;
 
    /* private static final String PATH_DATA_DOCUMENT = getPath(Constans.DATA_PATH_DATA_DOCUMENT);
     private static final String PATH_DATA_MUSIC = getPath(Constans.DATA_PATH_DATA_MUSIC);
@@ -95,6 +96,16 @@ public class DataManageActivity extends AppCompatActivity {
 
         mDataType = getIntent().getStringExtra("dataType");
 
+        initView();
+
+        requestPermission();
+
+        mDaoSession = ((App) getApplication()).getDaoSession();
+        mDataDao = mDaoSession.getDataDao();
+
+    }
+
+    private void initView() {
         mPopupGetPhoto = new PopupGetPhoto(this);
         mPopupGetPhoto.setPhotoListener(new PopupGetPhoto.GetPhotoListener() {
             @Override
@@ -127,6 +138,20 @@ public class DataManageActivity extends AppCompatActivity {
             }
         });
 
+        mDataAdapter = new DataAdapter(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rv.setLayoutManager(linearLayoutManager);
+        rv.setAdapter(mDataAdapter);
+        mDataAdapter.setFileDeletedListener(new DataAdapter.FileDeletedListener() {
+            @Override
+            public void onFileDeleted(FileData fileData) {
+                // mDataDao.deleteByKey(fileData.get);
+                initFile();
+            }
+        });
+    }
+
+    private void requestPermission() {
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             if (ContextCompat.checkSelfPermission(DataManageActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
                 //没有权限则申请权限
@@ -140,15 +165,10 @@ public class DataManageActivity extends AppCompatActivity {
             //小于6.0，不用申请权限，直接执行
             initFile();
         }
-
-        mDaoSession = ((App) getApplication()).getDaoSession();
-        mDataDao = mDaoSession.getDataDao();
-
     }
 
-
     // 打开系统的文件选择器
-    public void pickFile() {
+    private void pickFile() {
         /*Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("application/docx");
@@ -280,6 +300,7 @@ public class DataManageActivity extends AppCompatActivity {
                     @Override
                     public void accept(List<Data> datas) throws Exception {
                         saveToDB(datas);
+                        initFile();
                     }
                 });
     }
@@ -330,6 +351,7 @@ public class DataManageActivity extends AppCompatActivity {
                     @Override
                     public void accept(List<Data> datas) throws Exception {
                         saveToDB(datas);
+                        initFile();
                     }
                 });
 
@@ -385,10 +407,7 @@ public class DataManageActivity extends AppCompatActivity {
 
             arrayList.add(fileData);
         }
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rv.setLayoutManager(linearLayoutManager);
-        rv.setAdapter(new DataAdapter(this, arrayList));
+        mDataAdapter.addFile(arrayList);
     }
 
     private String getSuffix(String fileName) {
