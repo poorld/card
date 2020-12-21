@@ -11,6 +11,7 @@ import ooo.poorld.mycard.model.data.DataManageActivity;
 import ooo.poorld.mycard.utils.Constans;
 import ooo.poorld.mycard.utils.ConstansUtil;
 import ooo.poorld.mycard.utils.Permissions;
+import ooo.poorld.mycard.utils.Tools;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(MainActivity.this, DataMain.class));
+                        // startActivity(new Intent(MainActivity.this, DataMain.class));
+                        String dir = Tools.getBaseDir(MainActivity.this, DataManageActivity.dataPath);
+                        DataManageActivity.startActivity(MainActivity.this, dir);
                     }
                 });
         findViewById(R.id.rl_myself)

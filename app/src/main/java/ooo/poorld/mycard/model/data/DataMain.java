@@ -85,6 +85,6 @@ public class DataMain extends AppCompatActivity implements View.OnClickListener 
 
     private void startAct(String type) {
         String dir = Tools.getBaseDir(this, dataPath) + File.separator + type;
-        DataManageActivity.startActivity(this, dir, type);
+        // DataManageActivity.startActivity(this, dir, type);
     }
 }

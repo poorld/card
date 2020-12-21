@@ -28,6 +28,8 @@ import ooo.poorld.mycard.MyselfActivity;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.common.CommonPopView;
 import ooo.poorld.mycard.entity.FileData;
+import ooo.poorld.mycard.model.data.DataManageActivity;
+import ooo.poorld.mycard.utils.FileUtils;
 import ooo.poorld.mycard.utils.Tools;
 
 /**
@@ -109,30 +111,39 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
             case "xlsx":
                 setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_xls);
                 break;
+            case "txt":
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_txt);
+                break;
             default:
-                setDrawable(viewHolder.file_image_type, R.drawable.file);
+                setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_default);
                 break;
         }
 
-        /*if (fileData.isDirectory()) {
-            setDrawable(viewHolder.file_image, R.drawable.directory);
-            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+        if (fileData.isDirectory()) {
+            setDrawable(viewHolder.file_image_type, R.mipmap.file_icon_dir);
+            /*viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     // DataManageActivity.startActivity(mContext, fileData.getFilePath());
                 }
-            });
-        }*/
+            });*/
+        }
 
         // 选择打开方式
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AppChooser.from((FragmentActivity) mContext)
-                        .file(new File(fileData.getFilePath()))
-                        .requestCode(20001)
-                        .authority(BuildConfig.APPLICATION_ID + ".fileprovider")
-                        .load();
+                if (fileData.isDirectory()) {
+                    // String dir = Tools.getBaseDir(mContext, DataManageActivity.dataPath) + File.separator + fileData.getFilePath();
+                    DataManageActivity.startActivity(mContext, fileData.getFilePath());
+                } else {
+                    AppChooser.from((FragmentActivity) mContext)
+                            .file(new File(fileData.getFilePath()))
+                            .requestCode(20001)
+                            .authority(BuildConfig.APPLICATION_ID + ".fileprovider")
+                            .load();
+                }
+
             }
         });
         // 长按删除
@@ -154,9 +165,17 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
             public void onRightClick(FileData fileData) {
                 String filePath = fileData.getFilePath();
                 File file = new File(filePath);
-                if (file.delete()) {
+                boolean result;
+                if (fileData.isDirectory()) {
+                    result = FileUtils.deleteDirectory(filePath);
+                }else {
+                    result = FileUtils.deleteFile(file);
+                }
+
+                if (result) {
                     Toast.makeText(mContext, "删除成功", Toast.LENGTH_SHORT).show();
                 }
+
                 if (mFileDeletedListener != null) {
                     mFileDeletedListener.onFileDeleted(fileData);
                 }

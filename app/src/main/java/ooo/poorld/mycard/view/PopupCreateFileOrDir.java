@@ -19,33 +19,30 @@ import ooo.poorld.mycard.R;
  * date: 2019/8/22
  * description:
  */
-public class PopupGetPhoto {
+public class PopupCreateFileOrDir {
 
     private Context mContext;
     private PopupWindow mPopupWindow;
     private View mView;
-    private GetPhotoListener mGetPhotoListener;
+    private CreateListener mGetPhotoListener;
 
-    public PopupGetPhoto(Context context) {
+    public PopupCreateFileOrDir(Context context) {
         mContext = context;
         initPopup();
     }
 
-    public interface GetPhotoListener{
-        void fromDir();
+    public interface CreateListener{
+        void onCreateDir();
 
-        /**
-         * 从相册
-         */
-        void fromAlbum();
+        void onCreateFile();
     }
 
-    public void setPhotoListener(GetPhotoListener getPhotoListener) {
+    public void setCreateListener(CreateListener getPhotoListener) {
         mGetPhotoListener = getPhotoListener;
     }
 
     private void initPopup() {
-        mView = LayoutInflater.from(mContext).inflate(R.layout.popup_get_photo, null);
+        mView = LayoutInflater.from(mContext).inflate(R.layout.popup_crate_file_dir, null);
         mPopupWindow = new PopupWindow(mView, ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
@@ -59,29 +56,29 @@ public class PopupGetPhoto {
             }
         });
 
+        mView.findViewById(R.id.create_dir_rl)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mGetPhotoListener != null) {
+                            mGetPhotoListener.onCreateDir();
+                        }
+                    }
+                });
+        mView.findViewById(R.id.create_file_rl)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mGetPhotoListener != null) {
+                            mGetPhotoListener.onCreateFile();
+                        }
+                    }
+                });
         mView.findViewById(R.id.photo_cancel_rl)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         dismiss();
-                    }
-                });
-        mView.findViewById(R.id.take_photo_rl)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mGetPhotoListener != null) {
-                            mGetPhotoListener.fromDir();
-                        }
-                    }
-                });
-        mView.findViewById(R.id.from_album_rl)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mGetPhotoListener != null) {
-                            mGetPhotoListener.fromAlbum();
-                        }
                     }
                 });
     }

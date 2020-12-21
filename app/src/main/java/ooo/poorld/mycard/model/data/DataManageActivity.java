@@ -39,6 +39,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import ooo.poorld.mycard.App;
 import ooo.poorld.mycard.R;
+import ooo.poorld.mycard.common.InputPopView;
 import ooo.poorld.mycard.model.data.adapter.DataAdapter;
 import ooo.poorld.mycard.common.DataType;
 import ooo.poorld.mycard.entity.DaoSession;
@@ -47,8 +48,10 @@ import ooo.poorld.mycard.entity.DataDao;
 import ooo.poorld.mycard.entity.FileData;
 import ooo.poorld.mycard.utils.Constans;
 import ooo.poorld.mycard.utils.ConstansUtil;
+import ooo.poorld.mycard.utils.FileUtils;
 import ooo.poorld.mycard.utils.GlideEngine;
 import ooo.poorld.mycard.utils.Tools;
+import ooo.poorld.mycard.view.PopupCreateFileOrDir;
 import ooo.poorld.mycard.view.PopupGetPhoto;
 
 /**
@@ -63,11 +66,12 @@ public class DataManageActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 9527;
 
-    private static final String dataPath = Constans.BASE_PATH + File.separator + Constans.DATA_PATH_DATA;;
+    public static final String dataPath = Constans.BASE_PATH + File.separator + Constans.DATA_PATH_DATA;;
     private String mPath;
-    private String mDataType;
+    // private String mDataType;
     private PopupGetPhoto mPopupGetPhoto;
-
+    private PopupCreateFileOrDir mCreateFileOrDir;
+    private InputPopView mInputPopView;
     private DaoSession mDaoSession;
     private DataDao mDataDao;
     private DataAdapter mDataAdapter;
@@ -81,10 +85,10 @@ public class DataManageActivity extends AppCompatActivity {
         return Constans.BASE_PATH + File.separator + dataPath + File.separator + finallyPath;
     }*/
 
-    public static void startActivity(Context context, String path, String dataType) {
+    public static void startActivity(Context context, String path) {
         Intent intent = new Intent(context, DataManageActivity.class);
         intent.putExtra("path", path);
-        intent.putExtra("dataType", dataType);
+        // intent.putExtra("dataType", dataType);
         context.startActivity(intent);
     }
 
@@ -94,7 +98,7 @@ public class DataManageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_data_manage);
 
-        mDataType = getIntent().getStringExtra("dataType");
+        // mDataType = getIntent().getStringExtra("dataType");
 
         initView();
 
@@ -106,6 +110,48 @@ public class DataManageActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        mInputPopView = new InputPopView(this);
+        mInputPopView.setTitle("创建文件夹")
+                .setHint("请输入文件夹名称")
+                .setLeftTitle("取消")
+                .setRightTitle("确定")
+                .setOnBtnClick(new InputPopView.OnBtnClick() {
+                    @Override
+                    public void onLeftClick(String input) {
+                        mInputPopView.dismiss();
+                    }
+
+                    @Override
+                    public void onRightClick(String input) {
+                        if (!TextUtils.isEmpty(input)) {
+                            String path = mPath + File.separator + input;
+                            boolean result = FileUtils.createOrExistsDir(new File(path));
+                            if (result) {
+                                initFile();
+                            }
+                        } else {
+
+                        }
+                        mInputPopView.dismiss();
+                        mCreateFileOrDir.dismiss();
+                    }
+                });
+
+        mCreateFileOrDir = new PopupCreateFileOrDir(this);
+        mCreateFileOrDir.setCreateListener(new PopupCreateFileOrDir.CreateListener() {
+            @Override
+            public void onCreateDir() {
+                mInputPopView.show(fab);
+                mCreateFileOrDir.dismiss();
+            }
+
+            @Override
+            public void onCreateFile() {
+                mPopupGetPhoto.show(fab);
+                mCreateFileOrDir.dismiss();
+            }
+        });
+
         mPopupGetPhoto = new PopupGetPhoto(this);
         mPopupGetPhoto.setPhotoListener(new PopupGetPhoto.GetPhotoListener() {
             @Override
@@ -116,7 +162,8 @@ public class DataManageActivity extends AppCompatActivity {
 
             @Override
             public void fromAlbum() {
-                pickFile();
+                // pickFile();
+                pictureSelect();
                 mPopupGetPhoto.dismiss();
             }
         });
@@ -128,13 +175,17 @@ public class DataManageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // pickFile();
                 // selectFile();
+
                 // 如果是选择图片，则使用pictureSelector
-                if (Constans.DATA_PATH_DATA_IMAGE.equals(mDataType)) {
-                    // mPopupGetPhoto.show(fab);
+                /*if (Constans.DATA_PATH_DATA_IMAGE.equals(mDataType)) {
                     pictureSelect();
                 } else {
                     selectFile();
-                }
+                }*/
+
+                // mPopupGetPhoto.show(fab);
+                mCreateFileOrDir.show(fab);
+
             }
         });
 
@@ -184,7 +235,7 @@ public class DataManageActivity extends AppCompatActivity {
         }
 
         ArrayList<String> docs = new ArrayList<>();
-        String parent = new File(mPath).getName();
+        /*String parent = new File(mPath).getName();
         switch (parent) {
             case Constans.DATA_PATH_DATA_DOCUMENT:
                 docs.add(DocPicker.DocTypes.PDF);
@@ -201,7 +252,15 @@ public class DataManageActivity extends AppCompatActivity {
             case Constans.DATA_PATH_DATA_VIDEO:
                 docs.add(DocPicker.DocTypes.VIDEO);
                 break;
-        }
+        }*/
+
+        docs.add(DocPicker.DocTypes.PDF);
+        docs.add(DocPicker.DocTypes.MS_POWERPOINT);
+        docs.add(DocPicker.DocTypes.MS_EXCEL);
+        docs.add(DocPicker.DocTypes.TEXT);
+        docs.add(DocPicker.DocTypes.IMAGE);
+        docs.add(DocPicker.DocTypes.AUDIO);
+        docs.add(DocPicker.DocTypes.VIDEO);
 
         DocPickerConfig pickerConfig = new DocPickerConfig()
                 .setAllowMultiSelection(true)
@@ -286,7 +345,7 @@ public class DataManageActivity extends AppCompatActivity {
                             data.setDataID(id);
                             data.setDataName(input.getName());
                             data.setFilePath(output.getPath());
-                            data.setDataType(DataType.valueOfName(mDataType).getType());
+                            // data.setDataType(DataType.valueOfName(mDataType).getType());
 
                             datas.add(data);
 
@@ -337,7 +396,7 @@ public class DataManageActivity extends AppCompatActivity {
                             data.setDataID(id);
                             data.setDataName(output.getName());
                             data.setFilePath(output.getPath());
-                            data.setDataType(DataType.valueOfName(mDataType).getType());
+                            // data.setDataType(DataType.valueOfName(mDataType).getType());
 
                             datas.add(data);
 
@@ -388,6 +447,10 @@ public class DataManageActivity extends AppCompatActivity {
 
         File[] files = directory_data.listFiles();
         List<FileData> arrayList = new ArrayList<>();
+
+        List<FileData> dirList = new ArrayList<>();
+        List<FileData> fileList = new ArrayList<>();
+
         for (File file: files) {
             boolean directory = file.isDirectory();
 
@@ -401,13 +464,17 @@ public class DataManageActivity extends AppCompatActivity {
 
             if (directory) {
                 fileData.setFilePath(file.getAbsolutePath());
+                dirList.add(fileData);
             } else {
                 fileData.setFilePath(directory_data.getAbsolutePath() + File.separator + fileName);
+                fileList.add(fileData);
             }
 
-            arrayList.add(fileData);
+            // arrayList.add(fileData);
         }
-        mDataAdapter.addFile(arrayList);
+        // 排序文件夹在前，文件在后
+        dirList.addAll(fileList);
+        mDataAdapter.addFile(dirList);
     }
 
     private String getSuffix(String fileName) {

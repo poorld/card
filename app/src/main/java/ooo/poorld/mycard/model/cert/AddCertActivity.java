@@ -3,18 +3,15 @@ package ooo.poorld.mycard.model.cert;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -30,8 +27,11 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import ooo.poorld.mycard.App;
 import ooo.poorld.mycard.R;
+import ooo.poorld.mycard.common.HeaderViewAdapter;
 import ooo.poorld.mycard.entity.CardImage;
 import ooo.poorld.mycard.entity.CardImageDao;
 import ooo.poorld.mycard.entity.Certificate;
@@ -39,8 +39,8 @@ import ooo.poorld.mycard.entity.CertificateDao;
 import ooo.poorld.mycard.entity.DaoSession;
 import ooo.poorld.mycard.utils.Constans;
 import ooo.poorld.mycard.utils.ConstansUtil;
+import ooo.poorld.mycard.utils.FileUtils;
 import ooo.poorld.mycard.utils.GlideEngine;
-import ooo.poorld.mycard.utils.PxUtils;
 import ooo.poorld.mycard.utils.Tools;
 
 
@@ -51,7 +51,7 @@ import ooo.poorld.mycard.utils.Tools;
  */
 public class AddCertActivity extends AppCompatActivity {
 
-    private ImageView iv_add_img;
+    // private ImageView iv_add_img;
     private LinearLayout ll_image_container;
     private TextView btn_add;
     private TextView et_date;
@@ -60,6 +60,7 @@ public class AddCertActivity extends AppCompatActivity {
     private EditText et_name;
     private EditText et_cardholder;
     private EditText et_number;
+    private RecyclerView cert_rv;
 
     // private List<LocalMedia> mLocalMedia;
     private List<File> mFiles;
@@ -70,6 +71,7 @@ public class AddCertActivity extends AppCompatActivity {
     private DaoSession mDaoSession;
     private CardImageDao mCardImageDao;
     private CertificateDao mCertificateDao;
+    private HeaderViewAdapter mCertImageAdapter;
 
 
     @Override
@@ -90,7 +92,7 @@ public class AddCertActivity extends AppCompatActivity {
          */
         certID = ConstansUtil.getUUIDNumber();
 
-        iv_add_img = findViewById(R.id.iv_add_img);
+        // iv_add_img = findViewById(R.id.iv_add_img);
         ll_image_container = findViewById(R.id.ll_image_container);
         btn_add = findViewById(R.id.btn_add);
         et_date = findViewById(R.id.et_date);
@@ -106,7 +108,7 @@ public class AddCertActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(AddCertActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
         }
-        iv_add_img.setOnClickListener(new View.OnClickListener() {
+        /*iv_add_img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int childCount = ll_image_container.getChildCount();
@@ -116,7 +118,7 @@ public class AddCertActivity extends AppCompatActivity {
                 }
                 addPhoto();
             }
-        });
+        });*/
 
         btn_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,7 +151,34 @@ public class AddCertActivity extends AppCompatActivity {
             }
         });
 
+        mCertImageAdapter = new HeaderViewAdapter(this);
+        cert_rv = findViewById(R.id.cert_rv);
+        cert_rv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        // mCertImageAdapter.setHeaderView(cert_rv);
+        cert_rv.setAdapter(mCertImageAdapter);
+        View inflate = LayoutInflater.from(this).inflate(R.layout.item_cert_header, cert_rv, false);
+        mCertImageAdapter.setHeaderView(inflate);
+        mCertImageAdapter.setHeaderClickListener(new HeaderViewAdapter.HeaderClickListener() {
+            @Override
+            public void onHeaderClick() {
+                addPhoto();
+            }
+        });
+        mCertImageAdapter.setOnItemClickListener(new HeaderViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(CardImage localMedia) {
+                // 图片点击，放大
+            }
+
+            @Override
+            public void onRemoveClick(CardImage localMedia) {
+                // 删除图片
+                FileUtils.deleteFile(new File(localMedia.getFilePath()));
+            }
+        });
     }
+
+
 
     private void updateCert() {
         String etName = et_name.getText().toString();
@@ -165,7 +194,7 @@ public class AddCertActivity extends AppCompatActivity {
         }
     }
 
-    private void copyToDataFile(List<LocalMedia> localMedias) {
+    private void saveData(List<LocalMedia> localMedias) {
         // long certId = ConstansUtil.getUUIDNumber();
         Certificate certificate = new Certificate();
         certificate.setCertificateID(certID);
@@ -196,8 +225,9 @@ public class AddCertActivity extends AppCompatActivity {
             image.setImageID(imageId);
             images.add(image);
         }
-
         mCardImageDao.insertInTx(images);
+        mCertImageAdapter.addDatas(images);
+
         QueryBuilder<Certificate> qb = mCertificateDao.queryBuilder();
         qb.where(CertificateDao.Properties.CertificateID.eq(id));
 
@@ -205,27 +235,6 @@ public class AddCertActivity extends AppCompatActivity {
         // Certificate unique = qb.where(CertificateDao.Properties.CertificateID.eq(id)).unique();
         unique.resetCardImages();
         List<CardImage> cardImages = unique.getCardImages();
-
-    }
-
-
-
-    private void addImgToContainer(List<LocalMedia> result, List<File> files) {
-        mFiles = files;
-        for (LocalMedia localMedia : result) {
-            String compressPath = localMedia.getCompressPath();
-            Bitmap bitmap = BitmapFactory.decodeFile(compressPath);
-            ImageView iv = new ImageView(AddCertActivity.this);
-            iv.setScaleType(ImageView.ScaleType.FIT_XY);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(PxUtils.dp2px(this, 100), PxUtils.dp2px(this, 150));
-            lp.setMarginStart(PxUtils.px2dp(this, 10));
-            iv.setLayoutParams(lp);
-            iv.setImageBitmap(bitmap);
-            // int childCount = ll_image_container.getChildCount();
-            ll_image_container.addView(iv, 0);
-        }
-
-        int childCount = ll_image_container.getChildCount();
 
     }
 
@@ -248,18 +257,18 @@ public class AddCertActivity extends AppCompatActivity {
                         // 2.media.getCutPath();为裁剪后path，需判断media.isCut();是否为true
                         // 3.media.getCompressPath();为压缩后path，需判断media.isCompressed();是否为true
                         // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
-                        List<File> files = new ArrayList<>();
+                        // List<File> files = new ArrayList<>();
 
                         for (LocalMedia localMedia : result) {
 
-                            File file = null;
+                            /*File file = null;
                             if (localMedia.isCompressed()) {
                                 file = new File(localMedia.getCompressPath());
                             } else {
                                 file = new File(localMedia.getPath());
                             }
 
-                            files.add(file);
+                            files.add(file);*/
 
                             // LogUtils.e(localMedia.getSize() + "");
                             // LogUtils.e(localMedia.getPath() + "");
@@ -272,8 +281,8 @@ public class AddCertActivity extends AppCompatActivity {
                             Log.i(Constans.TAG, localMedia.getCompressPath());
 
                         }
-                        addImgToContainer(result, files);
-                        copyToDataFile(result);
+
+                        saveData(result);
 
                         // uploadFiles(files);
                     }
