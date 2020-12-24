@@ -58,6 +58,13 @@ public class CardActivity extends AppCompatActivity {
                 startActivityForResult(new Intent(CardActivity.this, AddCardActivity.class), 1001);
             }
         });
+        mCardAdapter.setCardDeletedListener(new CardAdapter.CardDeletedListener() {
+            @Override
+            public void onFileDeleted(Card card) {
+                mCardDao.delete(card);
+                loadData();
+            }
+        });
 
         loadData();
     }
@@ -74,7 +81,9 @@ public class CardActivity extends AppCompatActivity {
         if (requestCode == 1001 && resultCode == RESULT_OK) {
             // CertEntity entity = (CertEntity) data.getSerializableExtra("cert");
             // mCertAdapter.addCert(entity);
-            loadData();
+            // loadData();
         }
+
+        loadData();
     }
 }

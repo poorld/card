@@ -46,7 +46,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
     public DataAdapter(Context context) {
         this.mContext = context;
         this.mFileData = new ArrayList<>();
-        this.mCommonPopView = new CommonPopView(context);
+        this.mCommonPopView = new CommonPopView<FileData>(context);
         mCommonPopView.setTitle("提示");
         mCommonPopView.setMessage("您确定要删除该文件吗？");
         mCommonPopView.setLeftTitle("取消");
@@ -155,7 +155,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.ViewHolder> {
             }
         });
 
-        mCommonPopView.setOnBtnClick(new CommonPopView.OnBtnClick() {
+        mCommonPopView.setOnBtnClick(new CommonPopView.OnBtnClick<FileData>() {
             @Override
             public void onLeftClick(FileData fileData) {
                 mCommonPopView.dismiss();

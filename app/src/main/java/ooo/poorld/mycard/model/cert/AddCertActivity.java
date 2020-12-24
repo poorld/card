@@ -1,10 +1,14 @@
 package ooo.poorld.mycard.model.cert;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +16,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -65,6 +70,7 @@ public class AddCertActivity extends AppCompatActivity {
     // private List<LocalMedia> mLocalMedia;
     private List<File> mFiles;
 
+    // 是否已是添加
     private boolean certIsInserted;
 
     private Long certID;
@@ -73,6 +79,13 @@ public class AddCertActivity extends AppCompatActivity {
     private CertificateDao mCertificateDao;
     private HeaderViewAdapter mCertImageAdapter;
 
+    public static void startActivity(Context context, Long certId) {
+        Intent intent = new Intent(context, AddCertActivity.class);
+        if (certId != null) {
+            intent.putExtra("certId", certId);
+        }
+        ((Activity)context).startActivityForResult(intent, 1111);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +93,31 @@ public class AddCertActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cert_add);
 
         init();
+
+        getIntentData();
+    }
+
+    private void getIntentData() {
+        long id = getIntent().getLongExtra("certId", -1);
+        if (id == -1) {
+            return;
+        }
+        certID = id;
+        certIsInserted = true;
+        btn_add.setText("编辑");
+        DaoSession daoSession = ((App) getApplication()).getDaoSession();
+        CertificateDao certificateDao = daoSession.getCertificateDao();
+        Certificate cert = certificateDao.queryBuilder()
+                .where(CertificateDao.Properties.CertificateID.eq(certID))
+                .unique();
+
+        et_name.setText(TextUtils.isEmpty(cert.getCertificateName()) ? "" : cert.getCertificateName());
+        et_cardholder.setText(TextUtils.isEmpty(cert.getCertificateHolder()) ? "" : cert.getCertificateHolder());
+        et_number.setText(TextUtils.isEmpty(cert.getCertificateNumber()) ? "" : cert.getCertificateNumber());
+        et_date.setText(Tools.data2String(cert.getCertificateDate()));
+        et_content.setText(TextUtils.isEmpty(cert.getNote()) ? "" : cert.getNote());
+
+        mCertImageAdapter.addDatas(cert.getCardImages());
     }
 
     private void init() {
@@ -93,7 +131,6 @@ public class AddCertActivity extends AppCompatActivity {
         certID = ConstansUtil.getUUIDNumber();
 
         // iv_add_img = findViewById(R.id.iv_add_img);
-        ll_image_container = findViewById(R.id.ll_image_container);
         btn_add = findViewById(R.id.btn_add);
         et_date = findViewById(R.id.et_date);
         et_content = findViewById(R.id.et_content);
@@ -132,8 +169,7 @@ public class AddCertActivity extends AppCompatActivity {
                 // entity.setLocalMedia(mLocalMedia);
 
                 updateCert();
-                setResult(RESULT_OK);
-                finish();
+
             }
         });
 
@@ -173,7 +209,8 @@ public class AddCertActivity extends AppCompatActivity {
             @Override
             public void onRemoveClick(CardImage localMedia) {
                 // 删除图片
-                FileUtils.deleteFile(new File(localMedia.getFilePath()));
+                boolean b = FileUtils.deleteFile(new File(localMedia.getFilePath()));
+                mCardImageDao.delete(localMedia);
             }
         });
     }
@@ -186,12 +223,24 @@ public class AddCertActivity extends AppCompatActivity {
         String etNumber = et_number.getText().toString();
         String etDate = et_date.getText().toString();
         String etContent = et_content.getText().toString();
-        Certificate certificate = new Certificate(certID, etName, etNumber, etCardholder,etContent, Tools.string2Date(etDate));
-        if (certIsInserted) {
-            mCertificateDao.update(certificate);
+
+        if (TextUtils.isEmpty(etName) || TextUtils.isEmpty(etCardholder) ||
+                TextUtils.isEmpty(etNumber) || TextUtils.isEmpty(etDate) ||
+                TextUtils.isEmpty(etContent)) {
+
+            Toast.makeText(AddCertActivity.this, "不能为空", Toast.LENGTH_SHORT).show();
         } else {
-            mCertificateDao.insert(certificate);
+            Certificate certificate = new Certificate(certID, etName, etNumber, etCardholder,etContent, Tools.string2Date(etDate));
+            if (certIsInserted) {
+                mCertificateDao.update(certificate);
+            } else {
+                mCertificateDao.insert(certificate);
+            }
+            Intent intent = new Intent();
+            setResult(RESULT_OK, intent);
+            finish();
         }
+
     }
 
     private void saveData(List<LocalMedia> localMedias) {

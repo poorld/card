@@ -13,10 +13,9 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import ooo.poorld.mycard.R;
-import ooo.poorld.mycard.entity.FileData;
 
 
-public class CommonPopView {
+public class CommonPopView <T> {
 
     private Context mContext;
     private PopupWindow mPopupWindow;
@@ -24,7 +23,7 @@ public class CommonPopView {
 
     private OnBtnClick mOnBtnClick;
 
-    private FileData mFileData;
+    private T mData;
 
     public CommonPopView(Context context) {
         mContext = context;
@@ -32,10 +31,10 @@ public class CommonPopView {
         initPopView();
     }
 
-    public interface OnBtnClick{
-        void onLeftClick(FileData fileData);
+    public interface OnBtnClick<T>{
+        void onLeftClick(T data);
 
-        void onRightClick(FileData fileData);
+        void onRightClick(T data);
     }
 
     private void initPopView() {
@@ -57,14 +56,14 @@ public class CommonPopView {
                 .setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnBtnClick.onLeftClick(mFileData);
+                    mOnBtnClick.onLeftClick(mData);
                 }
             });
         mView.findViewById(R.id.rl_pop_right)
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mOnBtnClick.onRightClick(mFileData);
+                        mOnBtnClick.onRightClick(mData);
                     }
                 });
 
@@ -96,8 +95,8 @@ public class CommonPopView {
         return this;
     }
 
-    public void show(View v, FileData fileData) {
-        this.mFileData = fileData;
+    public void show(View v, T data) {
+        this.mData = data;
         // setFocusable 默认是false
         // setFocusable(true)外部和内部都会响应，点击外部就会取消，setOutsideTouchable(false)失效
         mPopupWindow.setFocusable(false);

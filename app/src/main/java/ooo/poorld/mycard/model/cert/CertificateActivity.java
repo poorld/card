@@ -51,7 +51,15 @@ public class CertificateActivity extends AppCompatActivity {
                 // Snackbar.make(view, "Here's a Snackbar", Snackbar.LENGTH_LONG)
                 //         .setAction("Action", null).show();
                 // startActivity();
-                startActivityForResult(new Intent(CertificateActivity.this, AddCertActivity.class), 1001);
+                // startActivityForResult(new Intent(CertificateActivity.this, AddCertActivity.class), 1001);
+                AddCertActivity.startActivity(CertificateActivity.this, null);
+            }
+        });
+        mCertAdapter.setCardDeletedListener(new CertAdapter.CertDeletedListener() {
+            @Override
+            public void onCertDeleted(Certificate card) {
+                mCertificateDao.delete(card);
+                loadData();
             }
         });
 
@@ -70,7 +78,11 @@ public class CertificateActivity extends AppCompatActivity {
         if (requestCode == 1001 && resultCode == RESULT_OK) {
             // CertEntity entity = (CertEntity) data.getSerializableExtra("cert");
             // mCertAdapter.addCert(entity);
-            loadData();
+
+            //            loadData();
         }
+
+        loadData();
+
     }
 }

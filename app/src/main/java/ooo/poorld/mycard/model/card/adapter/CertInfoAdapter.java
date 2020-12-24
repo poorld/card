@@ -14,6 +14,7 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import ooo.poorld.mycard.R;
+import ooo.poorld.mycard.common.CommonPopView;
 import ooo.poorld.mycard.entity.CardImage;
 
 /**
@@ -26,10 +27,13 @@ public class CertInfoAdapter extends RecyclerView.Adapter<CertInfoAdapter.ViewHo
 
     private List<CardImage> mCardImages;
 
+
     public CertInfoAdapter(Context context) {
         this.mContext = context;
         mCardImages = new ArrayList<>();
+
     }
+
 
     public void addImage(CardImage certEntity) {
         mCardImages.add(certEntity);

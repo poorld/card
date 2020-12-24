@@ -16,6 +16,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import ooo.poorld.mycard.R;
+import ooo.poorld.mycard.common.CommonPopView;
 import ooo.poorld.mycard.entity.CardImage;
 import ooo.poorld.mycard.entity.Certificate;
 import ooo.poorld.mycard.model.cert.CertInfoAct;
@@ -29,10 +30,24 @@ public class CertAdapter extends RecyclerView.Adapter<CertAdapter.ViewHolder> {
     private Context mContext;
 
     private List<Certificate> mCertEntities;
+    private CertDeletedListener mCardDeletedListener;
+    private CommonPopView mCommonPopView;
 
     public CertAdapter(Context context) {
         this.mContext = context;
         mCertEntities = new ArrayList<>();
+        mCommonPopView = new CommonPopView<Certificate>(context);
+        mCommonPopView.setTitle("提示");
+        mCommonPopView.setMessage("您确定要删除该卡片吗？");
+        mCommonPopView.setLeftTitle("取消");
+        mCommonPopView.setRightTitle("确定");
+    }
+
+    public interface CertDeletedListener{
+        void onCertDeleted(Certificate card);
+    }
+    public void setCardDeletedListener(CertDeletedListener fileDeletedListener) {
+        this.mCardDeletedListener = fileDeletedListener;
     }
 
     public void addCert(Certificate certEntity) {
@@ -72,6 +87,27 @@ public class CertAdapter extends RecyclerView.Adapter<CertAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
                 CertInfoAct.startActivity(mContext, entity.getCertificateID());
+            }
+        });
+        viewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                mCommonPopView.show(viewHolder.cert_note, entity);
+                return true;
+            }
+        });
+        mCommonPopView.setOnBtnClick(new CommonPopView.OnBtnClick<Certificate>() {
+            @Override
+            public void onLeftClick(Certificate data) {
+                mCommonPopView.dismiss();
+            }
+
+            @Override
+            public void onRightClick(Certificate data) {
+                if (mCardDeletedListener != null) {
+                    mCardDeletedListener.onCertDeleted(data);
+                }
+                mCommonPopView.dismiss();
             }
         });
     }
