@@ -10,11 +10,15 @@ import android.widget.ImageView;
 
 import com.luck.picture.lib.entity.LocalMedia;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import io.zhuliang.appchooser.AppChooser;
+import ooo.poorld.mycard.BuildConfig;
 import ooo.poorld.mycard.R;
 
 /**
@@ -85,8 +89,15 @@ public class CertImageAdapter extends RecyclerView.Adapter<CertImageAdapter.View
                 @Override
                 public void onClick(View v) {
                     // mListener.onItemClick(pos, data);
+                    AppChooser.from((FragmentActivity) mContext)
+                            .file(new File(compressPath))
+                            .requestCode(20001)
+                            .authority(BuildConfig.APPLICATION_ID + ".fileprovider")
+                            .load();
                 }
             });
+
+
         }
 
         /*Bitmap bitmap = mCardImages.get(position);

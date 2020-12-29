@@ -27,7 +27,7 @@
 
         <EditText
             android:id="@+id/et_name"
-            android:layout_weight="5"
+            android:layout_weight="4"
             android:layout_height="match_parent"
             android:layout_marginStart="15dp"
             android:background="@null"
@@ -52,7 +52,7 @@
         <EditText
             android:id="@+id/et_cardholder"
             android:layout_width="0dp"
-            android:layout_weight="5"
+            android:layout_weight="4"
             android:layout_height="match_parent"
             android:layout_marginStart="15dp"
             android:background="@null"/>
@@ -76,7 +76,7 @@
         <EditText
             android:id="@+id/et_number"
             android:layout_width="0dp"
-            android:layout_weight="5"
+            android:layout_weight="4"
             android:layout_height="match_parent"
             android:layout_marginStart="15dp"
             android:background="@null"/>

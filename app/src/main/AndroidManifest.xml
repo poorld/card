@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config">
-        <activity android:name=".MainActivity">
+        <activity android:name=".model.login.LoginAct">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,6 +32,7 @@
         <activity android:name=".model.card.AddCardActivity" />
         <activity android:name=".model.card.CardInfoAct" />
         <activity android:name=".model.data.DataMain" />
+        <activity android:name=".MainActivity" />
 
         <provider
             android:name=".common.MyFileProvider"

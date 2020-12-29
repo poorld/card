@@ -8,11 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import io.zhuliang.appchooser.AppChooser;
+import ooo.poorld.mycard.BuildConfig;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.entity.CardImage;
 import ooo.poorld.mycard.model.cert.CertInfoAct;
@@ -57,7 +61,16 @@ public class CertInfoAdapter extends RecyclerView.Adapter<CertInfoAdapter.ViewHo
         CardImage entity = mCardImages.get(i);
         Bitmap bitmap = BitmapFactory.decodeFile(entity.getFilePath());
         viewHolder.info_iv.setImageBitmap(bitmap);
-
+        viewHolder.info_iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AppChooser.from((FragmentActivity) mContext)
+                        .file(new File(entity.getFilePath()))
+                        .requestCode(20001)
+                        .authority(BuildConfig.APPLICATION_ID + ".fileprovider")
+                        .load();
+            }
+        });
     }
 
     @Override

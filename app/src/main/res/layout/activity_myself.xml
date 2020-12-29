@@ -78,6 +78,7 @@
             android:paddingStart="15dp" />
 
     <TextView
+        android:id="@+id/log_out"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/shape_radius_7182ff"

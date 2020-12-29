@@ -1,7 +1,7 @@
 package ooo.poorld.mycard;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -9,8 +9,6 @@ import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -18,25 +16,22 @@ import com.google.gson.reflect.TypeToken;
 
 import net.lingala.zip4j.exception.ZipException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.lang.reflect.Type;
-import java.util.Date;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
-import okhttp3.Response;
+import ooo.poorld.mycard.common.CommonPopView;
+import ooo.poorld.mycard.entity.Card;
 import ooo.poorld.mycard.entity.FileUploadResponse;
 import ooo.poorld.mycard.entity.Upload;
+import ooo.poorld.mycard.model.login.LoginAct;
 import ooo.poorld.mycard.utils.BackupTask;
 import ooo.poorld.mycard.utils.Constans;
 import ooo.poorld.mycard.utils.ConstansUtil;
 import ooo.poorld.mycard.utils.FileUtils;
-import ooo.poorld.mycard.utils.Tools;
 import ooo.poorld.mycard.utils.ZipUtils;
 import ooo.poorld.mycard.utils.okhttp.CallBackUtil;
 import ooo.poorld.mycard.utils.okhttp.OkhttpUtil;
@@ -56,12 +51,14 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
     private FloatingActionButton fab;
     private TextView upload;
     private TextView download;
+    private TextView log_out;
 
     private MyProgressBar myProgressBar;
     private BackupTask mTask;
     private boolean inited = false;
 
     private PopupBackup mPopupBackup;
+    private CommonPopView mCommonPopView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +66,7 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_myself);
         upload = findViewById(R.id.upload);
         download = findViewById(R.id.download);
+        log_out = findViewById(R.id.log_out);
         upload.setOnClickListener(this);
         download.setOnClickListener(this);
 
@@ -78,13 +76,37 @@ public class MyselfActivity extends AppCompatActivity implements View.OnClickLis
         mTask = new BackupTask(this);
 
         mPopupBackup = new PopupBackup(this);
+        mCommonPopView = new CommonPopView<Card>(MyselfActivity.this);
+        mCommonPopView.setTitle("提示");
+        mCommonPopView.setMessage("您确定要退出登录吗？");
+        mCommonPopView.setLeftTitle("取消");
+        mCommonPopView.setRightTitle("确定");
+        mCommonPopView.setOnBtnClick(new CommonPopView.OnBtnClick() {
+            @Override
+            public void onLeftClick(Object data) {
+                mCommonPopView.dismiss();
+            }
+
+            @Override
+            public void onRightClick(Object data) {
+                mCommonPopView.dismiss();
+                Intent i = new Intent(MyselfActivity.this, LoginAct.class);
+                startActivity(i);
+                finish();
+            }
+        });
         mPopupBackup.setItemClickListener(new PopupBackup.ItemClickListener() {
             @Override
             public void onItemClick(Upload upload) {
                 downloadBackup(upload);
             }
         });
-
+        log_out.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCommonPopView.show(log_out, null);
+            }
+        });
     }
 
     @Override

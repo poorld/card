@@ -37,7 +37,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import io.zhuliang.appchooser.AppChooser;
 import ooo.poorld.mycard.App;
+import ooo.poorld.mycard.BuildConfig;
 import ooo.poorld.mycard.R;
 import ooo.poorld.mycard.common.HeaderViewAdapter;
 import ooo.poorld.mycard.entity.Card;
@@ -198,6 +200,11 @@ public class AddCardActivity extends AppCompatActivity {
             @Override
             public void onItemClick(CardImage localMedia) {
                 // 图片点击，放大
+                AppChooser.from(AddCardActivity.this)
+                        .file(new File(localMedia.getFilePath()))
+                        .requestCode(20001)
+                        .authority(BuildConfig.APPLICATION_ID + ".fileprovider")
+                        .load();
             }
 
             @Override
